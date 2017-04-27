@@ -10,10 +10,13 @@ then
   exit 2
 fi
 
-DEVELOP_BRANCH=develop
-MASTER_BRANCH=master
-
 RELEASE_VERSION=$1
+
+source $SCRIPT_PATH/hooks.sh
+
+DEVELOP_BRANCH=`getDevelopBranchName`
+MASTER_BRANCH=`getMasterBranchName`
+RELEASE_BRANCH=`formatReleaseBranchName "$RELEASE_VERSION"`
 
 if ! git diff-index --quiet HEAD --
 then
@@ -39,9 +42,6 @@ then
 fi
 
 CURRENT_BRANCH=`git rev-parse --abbrev-ref HEAD`
-RELEASE_BRANCH="release-$RELEASE_VERSION"
-
-source $SCRIPT_PATH/hooks.sh
 
 # revert master branch
 git checkout $MASTER_BRANCH

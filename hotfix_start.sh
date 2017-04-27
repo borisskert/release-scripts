@@ -14,11 +14,11 @@ fi
 HOTFIX_VERSION=$1
 HOTFIX_SNAPSHOT_VERSION="${HOTFIX_VERSION}-SNAPSHOT"
 
-DEVELOP_BRANCH=develop
-MASTER_BRANCH=master
-HOTFIX_BRANCH="hotfix-${HOTFIX_VERSION}"
-
 source $SCRIPT_PATH/hooks.sh
+
+DEVELOP_BRANCH=`getDevelopBranchName`
+MASTER_BRANCH=`getMasterBranchName`
+HOTFIX_BRANCH=`formatHotfixBranchName "$HOTFIX_VERSION"`
 
 if ! git diff-index --quiet HEAD --
 then

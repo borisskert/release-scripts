@@ -14,10 +14,11 @@ fi
 HOTFIX_VERSION=$1
 NEXT_VERSION=$2
 
-DEVELOP_BRANCH=develop
-MASTER_BRANCH=master
-HOTFIX_BRANCH="hotfix-${HOTFIX_VERSION}"
 CURRENT_BRANCH=`git rev-parse --abbrev-ref HEAD`
+
+DEVELOP_BRANCH=`getDevelopBranchName`
+MASTER_BRANCH=`getMasterBranchName`
+HOTFIX_BRANCH=`formatHotfixBranchName "$HOTFIX_VERSION"`
 
 source $SCRIPT_PATH/hooks.sh
 

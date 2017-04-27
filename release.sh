@@ -12,12 +12,13 @@ then
   exit 2
 fi
 
-DEVELOP_BRANCH=develop
-MASTER_BRANCH=master
-RELEASE_BRANCH="release-$RELEASE_VERSION"
 CURRENT_BRANCH=`git rev-parse --abbrev-ref HEAD`
 
 source $SCRIPT_PATH/hooks.sh
+
+DEVELOP_BRANCH=`getDevelopBranchName`
+MASTER_BRANCH=`getMasterBranchName`
+RELEASE_BRANCH=`formatReleaseBranchName "$RELEASE_VERSION"`
 
 if [ ! "$CURRENT_BRANCH" = "$DEVELOP_BRANCH" ]
 then
