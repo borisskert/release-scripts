@@ -15,8 +15,22 @@ fi
 DEVELOP_BRANCH=develop
 MASTER_BRANCH=master
 RELEASE_BRANCH="release-$RELEASE_VERSION"
+CURRENT_BRANCH=`git rev-parse --abbrev-ref HEAD`
 
 source $SCRIPT_PATH/hooks.sh
+
+if [ ! "$CURRENT_BRANCH" = "$DEVELOP_BRANCH" ]
+then
+  echo "Please checkout the branch '$DEVELOP_BRANCH' before processing this release script."
+  exit 1
+fi
+
+if ! git diff-index --quiet HEAD --
+then
+  echo "This script is only safe when your have a clean workspace."
+  echo "Please clean your workspace by stashing or commiting and pushing changes before processing this release script."
+  exit 1
+fi
 
 git checkout $DEVELOP_BRANCH && git pull
 git checkout -b $RELEASE_BRANCH

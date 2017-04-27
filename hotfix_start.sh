@@ -5,10 +5,10 @@ SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 if [ $# -ne 1 ]
 then
-        echo 'Usage: hotfix_start.sh <hotfix-version>'
-        echo 'For example:'
-        echo 'hotfix_start.sh 0.2.1'
-        exit 2
+  echo 'Usage: hotfix_start.sh <hotfix-version>'
+  echo 'For example:'
+  echo 'hotfix_start.sh 0.2.1'
+  exit 2
 fi
 
 HOTFIX_VERSION=$1
@@ -19,6 +19,13 @@ MASTER_BRANCH=master
 HOTFIX_BRANCH="hotfix-${HOTFIX_VERSION}"
 
 source $SCRIPT_PATH/hooks.sh
+
+if ! git diff-index --quiet HEAD --
+then
+  echo "This script is only safe when your have a clean workspace."
+  echo "Please clean your workspace by stashing or commiting and pushing changes before processing this revert-release script."
+  exit 1
+fi
 
 git checkout $MASTER_BRANCH && git pull
 git checkout -b $HOTFIX_BRANCH
