@@ -16,9 +16,9 @@ HOTFIX_SNAPSHOT_VERSION="${HOTFIX_VERSION}-SNAPSHOT"
 
 source $SCRIPT_PATH/hooks.sh
 
-DEVELOP_BRANCH=`getDevelopBranchName`
-MASTER_BRANCH=`getMasterBranchName`
-HOTFIX_BRANCH=`formatHotfixBranchName "$HOTFIX_VERSION"`
+DEVELOP_BRANCH=`get_develop_branch_name`
+MASTER_BRANCH=`get_master_branch_name`
+HOTFIX_BRANCH=`format_hotfix_branch_name "$HOTFIX_VERSION"`
 
 if ! git diff-index --quiet HEAD --
 then

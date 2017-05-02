@@ -16,11 +16,11 @@ NEXT_VERSION=$2
 
 CURRENT_BRANCH=`git rev-parse --abbrev-ref HEAD`
 
-DEVELOP_BRANCH=`getDevelopBranchName`
-MASTER_BRANCH=`getMasterBranchName`
-HOTFIX_BRANCH=`formatHotfixBranchName "$HOTFIX_VERSION"`
-
 source $SCRIPT_PATH/hooks.sh
+
+DEVELOP_BRANCH=`get_develop_branch_name`
+MASTER_BRANCH=`get_master_branch_name`
+HOTFIX_BRANCH=`format_hotfix_branch_name "$HOTFIX_VERSION"`
 
 if [ ! "$HOTFIX_BRANCH" = "$CURRENT_BRANCH" ]
 then
@@ -37,7 +37,8 @@ fi
 
 git checkout $HOTFIX_BRANCH && git pull
 
-release_modules $HOTFIX_VERSION
+build_snapshot_modules
+set_modules_version $HOTFIX_VERSION
 
 if ! git diff-files --quiet --ignore-submodules --
 then
@@ -47,18 +48,20 @@ else
   echo "Nothing to commit..."
 fi
 
+build_release_modules
+
 # merge current hotfix into master
 git checkout $MASTER_BRANCH && git pull
 git merge --no-edit $HOTFIX_BRANCH
 
 # create release tag and push master
-HOTFIX_TAG=`formatReleaseTag "$HOTFIX_VERSION"`
+HOTFIX_TAG=`format_release_tag "$HOTFIX_VERSION"`
 git tag -a "$HOTFIX_TAG" -m "Release $HOTFIX_VERSION"
 
 git checkout $HOTFIX_BRANCH
 
 # prepare next snapshot version
-NEXT_SNAPSHOT_VERSION=`formatSnapshotVersion "$NEXT_VERSION"`
+NEXT_SNAPSHOT_VERSION=`format_snapshot_version "$NEXT_VERSION"`
 set_modules_version "$NEXT_SNAPSHOT_VERSION"
 
 if ! git diff-files --quiet --ignore-submodules --

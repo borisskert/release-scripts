@@ -16,9 +16,9 @@ CURRENT_BRANCH=`git rev-parse --abbrev-ref HEAD`
 
 source $SCRIPT_PATH/hooks.sh
 
-DEVELOP_BRANCH=`getDevelopBranchName`
-MASTER_BRANCH=`getMasterBranchName`
-RELEASE_BRANCH=`formatReleaseBranchName "$RELEASE_VERSION"`
+DEVELOP_BRANCH=`get_develop_branch_name`
+MASTER_BRANCH=`get_master_branch_name`
+RELEASE_BRANCH=`format_release_branch_name "$RELEASE_VERSION"`
 
 if [ ! "$CURRENT_BRANCH" = "$DEVELOP_BRANCH" ]
 then
@@ -36,7 +36,8 @@ fi
 git checkout $DEVELOP_BRANCH && git pull
 git checkout -b $RELEASE_BRANCH
 
-release_modules $RELEASE_VERSION
+build_snapshot_modules
+set_modules_version $RELEASE_VERSION
 
 if ! git diff-files --quiet --ignore-submodules --
 then
@@ -46,17 +47,19 @@ else
   echo "Nothing to commit..."
 fi
 
+build_release_modules
+
 # merge current develop (over release branch) into master
 git checkout $MASTER_BRANCH && git pull
 git merge -X theirs --no-edit $RELEASE_BRANCH
 
 # create release tag on master
-RELEASE_TAG=`formatReleaseTag "$RELEASE_VERSION"`
+RELEASE_TAG=`format_release_tag "$RELEASE_VERSION"`
 git tag -a "$RELEASE_TAG" -m "Release $RELEASE_VERSION"
 
 git checkout $RELEASE_BRANCH
 
-NEXT_SNAPSHOT_VERSION=`formatSnapshotVersion "$NEXT_VERSION"`
+NEXT_SNAPSHOT_VERSION=`format_snapshot_version "$NEXT_VERSION"`
 set_modules_version "$NEXT_SNAPSHOT_VERSION"
 
 if ! git diff-files --quiet --ignore-submodules --

@@ -14,9 +14,9 @@ RELEASE_VERSION=$1
 
 source $SCRIPT_PATH/hooks.sh
 
-DEVELOP_BRANCH=`getDevelopBranchName`
-MASTER_BRANCH=`getMasterBranchName`
-RELEASE_BRANCH=`formatReleaseBranchName "$RELEASE_VERSION"`
+DEVELOP_BRANCH=`get_develop_branch_name`
+MASTER_BRANCH=`get_master_branch_name`
+RELEASE_BRANCH=`format_release_branch_name "$RELEASE_VERSION"`
 
 if ! git diff-index --quiet HEAD --
 then
@@ -58,7 +58,7 @@ then
 fi
 
 # delete release tag
-RELEASE_TAG=`formatReleaseTag "$RELEASE_VERSION"`
+RELEASE_TAG=`format_release_tag "$RELEASE_VERSION"`
 if git rev-parse --verify "$RELEASE_TAG"
 then
   git tag -d "$RELEASE_TAG"
