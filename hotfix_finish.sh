@@ -38,6 +38,8 @@ fi
 git checkout $HOTFIX_BRANCH && git pull
 
 build_snapshot_modules
+git reset --hard
+
 set_modules_version $HOTFIX_VERSION
 
 if ! git diff-files --quiet --ignore-submodules --
@@ -49,6 +51,7 @@ else
 fi
 
 build_release_modules
+git reset --hard
 
 # merge current hotfix into master
 git checkout $MASTER_BRANCH && git pull

@@ -37,6 +37,8 @@ git checkout $DEVELOP_BRANCH && git pull
 git checkout -b $RELEASE_BRANCH
 
 build_snapshot_modules
+git reset --hard
+
 set_modules_version $RELEASE_VERSION
 
 if ! git diff-files --quiet --ignore-submodules --
@@ -48,6 +50,7 @@ else
 fi
 
 build_release_modules
+git reset --hard
 
 # merge current develop (over release branch) into master
 git checkout $MASTER_BRANCH && git pull
