@@ -1,7 +1,11 @@
 #!/bin/bash
 set -e
-
-SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+if [ -f "./.common-util.sh" ]; then
+	source ./.common-util.sh
+else
+	echo 'Missing file .common-util.sh. Aborting'
+	exit -1
+fi
 
 if [ $# -ne 1 ]
 then
@@ -14,18 +18,9 @@ fi
 HOTFIX_VERSION=$1
 HOTFIX_SNAPSHOT_VERSION="${HOTFIX_VERSION}-SNAPSHOT"
 
-source $SCRIPT_PATH/hooks.sh
-
-DEVELOP_BRANCH=`get_develop_branch_name`
-MASTER_BRANCH=`get_master_branch_name`
 HOTFIX_BRANCH=`format_hotfix_branch_name "$HOTFIX_VERSION"`
 
-if ! git diff-index --quiet HEAD --
-then
-  echo "This script is only safe when your have a clean workspace."
-  echo "Please clean your workspace by stashing or commiting and pushing changes before processing this revert-release script."
-  exit 1
-fi
+check_local_workspace_state "hotfix_start"
 
 git checkout $MASTER_BRANCH && git pull
 git checkout -b $HOTFIX_BRANCH

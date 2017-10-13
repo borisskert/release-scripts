@@ -1,7 +1,12 @@
 #!/bin/bash
 set -e
+if [ -f "./.common-util.sh" ]; then
+	source ./.common-util.sh
+else
+	echo 'Missing file .common-util.sh. Aborting'
+	exit -1
+fi
 
-SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 RELEASE_VERSION=$1
 NEXT_VERSION=$2
 
@@ -12,12 +17,6 @@ then
   exit 2
 fi
 
-CURRENT_BRANCH=`git rev-parse --abbrev-ref HEAD`
-
-source $SCRIPT_PATH/hooks.sh
-
-DEVELOP_BRANCH=`get_develop_branch_name`
-MASTER_BRANCH=`get_master_branch_name`
 RELEASE_BRANCH=`format_release_branch_name "$RELEASE_VERSION"`
 
 if [ ! "$CURRENT_BRANCH" = "$DEVELOP_BRANCH" ]
@@ -26,12 +25,7 @@ then
   exit 1
 fi
 
-if ! git diff-index --quiet HEAD --
-then
-  echo "This script is only safe when your have a clean workspace."
-  echo "Please clean your workspace by stashing or commiting and pushing changes before processing this release script."
-  exit 1
-fi
+check_local_workspace_state "release"
 
 git checkout $DEVELOP_BRANCH && git pull
 git checkout -b $RELEASE_BRANCH
@@ -88,3 +82,4 @@ else
   echo "# Please do so and finish the release process with the following command:"
   echo "git push --atomic origin $MASTER_BRANCH $DEVELOP_BRANCH --follow-tags # all or nothing"
 fi
+

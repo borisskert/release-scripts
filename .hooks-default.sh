@@ -1,13 +1,14 @@
 #!/bin/bash
 # ********************** INFO *********************
-# This file is used to override default settings.
-# Therefore only the functions that deviate from
-# provided defaults may be left here.
-# You can use it also in parent directory with the
-# name .release-scripts-hook.sh
+# This file is used to define default settings.
+# Please do not change it.
+# To override these settings please define functions
+# with the same name in file hooks.sh in this directory
+# or in file .release-script-hook.sh in parent directory
 # *************************************************
 set -e
 
+SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Hook method to format your release tag
 # Parameter $1 - version as text
