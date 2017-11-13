@@ -1,7 +1,11 @@
 #!/bin/bash
 set -e
-
-SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+if [ -f "./.common-util.sh" ]; then
+	source ./.common-util.sh
+else
+	echo 'Missing file .common-util.sh. Aborting'
+	exit -1
+fi
 
 if [ $# -ne 2 ]
 then
@@ -14,13 +18,6 @@ fi
 HOTFIX_VERSION=$1
 NEXT_VERSION=$2
 
-CURRENT_BRANCH=`git rev-parse --abbrev-ref HEAD`
-
-source $SCRIPT_PATH/hooks.sh
-
-REMOTE_REPO=`get_remote_repo_name`
-DEVELOP_BRANCH=`get_develop_branch_name`
-MASTER_BRANCH=`get_master_branch_name`
 HOTFIX_BRANCH=`format_hotfix_branch_name "$HOTFIX_VERSION"`
 
 if [ ! "$HOTFIX_BRANCH" = "$CURRENT_BRANCH" ]
@@ -29,12 +26,7 @@ then
   exit 1
 fi
 
-if ! git diff-index --quiet HEAD --
-then
-  echo "This script is only safe when your have a clean workspace."
-  echo "Please clean your workspace by stashing or commiting and pushing changes before processing this release script."
-  exit 1
-fi
+check_local_workspace_state "hotfix_finish"
 
 git checkout $HOTFIX_BRANCH && git pull $REMOTE_REPO
 
@@ -91,3 +83,4 @@ else
   echo "# Please do so and continue the hotfix finishing with the following command:"
   echo "git push --atomic $REMOTE_REPO $MASTER_BRANCH $DEVELOP_BRANCH $HOTFIX_BRANCH --follow-tags # all or nothing"
 fi
+
