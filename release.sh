@@ -16,6 +16,7 @@ CURRENT_BRANCH=`git rev-parse --abbrev-ref HEAD`
 
 source $SCRIPT_PATH/hooks.sh
 
+REMOTE_REPO=`get_remote_repo_name`
 DEVELOP_BRANCH=`get_develop_branch_name`
 MASTER_BRANCH=`get_master_branch_name`
 RELEASE_BRANCH=`format_release_branch_name "$RELEASE_VERSION"`
@@ -33,7 +34,7 @@ then
   exit 1
 fi
 
-git checkout $DEVELOP_BRANCH && git pull
+git checkout $DEVELOP_BRANCH && git pull $REMOTE_REPO
 git checkout -b $RELEASE_BRANCH
 
 build_snapshot_modules
@@ -53,7 +54,7 @@ build_release_modules
 git reset --hard
 
 # merge current develop (over release branch) into master
-git checkout $MASTER_BRANCH && git pull
+git checkout $MASTER_BRANCH && git pull $REMOTE_REPO
 git merge -X theirs --no-edit $RELEASE_BRANCH
 
 # create release tag on master
@@ -81,10 +82,10 @@ then
   echo "# Okay, now you've got a new tag and commits on $MASTER_BRANCH and $DEVELOP_BRANCH."
   echo "# Please check if everything looks as expected and then push."
   echo "# Use this command to push all at once or nothing, if anything goes wrong:"
-  echo "git push --atomic origin $MASTER_BRANCH $DEVELOP_BRANCH --follow-tags # all or nothing"
+  echo "git push --atomic $REMOTE_REPO $MASTER_BRANCH $DEVELOP_BRANCH --follow-tags # all or nothing"
 else
   echo "# Okay, you have got a conflict while merging onto $DEVELOP_BRANCH"
   echo "# but don't panic, in most cases you can easily resolve the conflicts (in some cases you even do not need to merge all)."
   echo "# Please do so and finish the release process with the following command:"
-  echo "git push --atomic origin $MASTER_BRANCH $DEVELOP_BRANCH --follow-tags # all or nothing"
+  echo "git push --atomic $REMOTE_REPO $MASTER_BRANCH $DEVELOP_BRANCH --follow-tags # all or nothing"
 fi

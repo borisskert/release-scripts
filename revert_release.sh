@@ -14,6 +14,7 @@ RELEASE_VERSION=$1
 
 source $SCRIPT_PATH/hooks.sh
 
+REMOTE_REPO=`get_remote_repo_name`
 DEVELOP_BRANCH=`get_develop_branch_name`
 MASTER_BRANCH=`get_master_branch_name`
 RELEASE_BRANCH=`format_release_branch_name "$RELEASE_VERSION"`
@@ -45,11 +46,11 @@ CURRENT_BRANCH=`git rev-parse --abbrev-ref HEAD`
 
 # revert master branch
 git checkout $MASTER_BRANCH
-git reset origin/$MASTER_BRANCH --hard
+git reset ${REMOTE_REPO}/${MASTER_BRANCH} --hard
 
 # revert develop branch
 git checkout $DEVELOP_BRANCH
-git reset origin/$DEVELOP_BRANCH --hard
+git reset ${REMOTE_REPO}/${DEVELOP_BRANCH} --hard
 
 # delete release branch
 if git rev-parse --verify $RELEASE_BRANCH

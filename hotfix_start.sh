@@ -16,6 +16,7 @@ HOTFIX_SNAPSHOT_VERSION="${HOTFIX_VERSION}-SNAPSHOT"
 
 source $SCRIPT_PATH/hooks.sh
 
+REMOTE_REPO=`get_remote_repo_name`
 DEVELOP_BRANCH=`get_develop_branch_name`
 MASTER_BRANCH=`get_master_branch_name`
 HOTFIX_BRANCH=`format_hotfix_branch_name "$HOTFIX_VERSION"`
@@ -27,7 +28,7 @@ then
   exit 1
 fi
 
-git checkout $MASTER_BRANCH && git pull
+git checkout $MASTER_BRANCH && git pull $REMOTE_REPO
 git checkout -b $HOTFIX_BRANCH
 
 set_modules_version $HOTFIX_SNAPSHOT_VERSION
@@ -43,4 +44,4 @@ fi
 echo "# Okay, now you've got a new hotfix branch called $HOTFIX_BRANCH"
 echo "# Please check if everything looks as expected and then push."
 echo "# Use this command to push your created hotfix-branch:"
-echo "git push --set-upstream origin $HOTFIX_BRANCH"
+echo "git push --set-upstream $REMOTE_REPO $HOTFIX_BRANCH"
