@@ -3,6 +3,14 @@ set -e
 
 SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+if [ -f "${SCRIPT_PATH}/.version.sh" ]; then
+	source ${SCRIPT_PATH}/.version.sh
+else
+	VERSION="UNKNOWN VERSION"
+fi
+
+echo "Release scripts (release, version: ${VERSION})"
+
 if [ -f "${SCRIPT_PATH}/.common-util.sh" ]; then
 	source ${SCRIPT_PATH}/.common-util.sh
 else
@@ -50,14 +58,21 @@ build_release_modules
 git reset --hard
 
 # merge current develop (over release branch) into master
-git checkout ${MASTER_BRANCH} && git pull ${REMOTE_REPO}
+if is_branch_existing ${MASTER_BRANCH} || is_branch_existing remotes/${REMOTE_REPO}/${MASTER_BRANCH}
+then
+  git checkout ${MASTER_BRANCH} && git pull ${REMOTE_REPO}
+else
+  git checkout -b ${MASTER_BRANCH}
+  git push --set-upstream ${REMOTE_REPO} ${MASTER_BRANCH}
+fi
+
 git merge -X theirs --no-edit ${RELEASE_BRANCH}
 
 # create release tag on master
 RELEASE_TAG=`format_release_tag "${RELEASE_VERSION}"`
 git tag -a "${RELEASE_TAG}" -m "Release ${RELEASE_VERSION}"
 
-git checkout $RELEASE_BRANCH
+git checkout ${RELEASE_BRANCH}
 
 NEXT_SNAPSHOT_VERSION=`format_snapshot_version "${NEXT_VERSION}"`
 set_modules_version "${NEXT_SNAPSHOT_VERSION}"
@@ -85,4 +100,3 @@ else
   echo "# Please do so and finish the release process with the following command:"
   echo "git push --atomic ${REMOTE_REPO} ${MASTER_BRANCH} ${DEVELOP_BRANCH} --follow-tags # all or nothing"
 fi
-

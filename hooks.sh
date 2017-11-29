@@ -70,5 +70,5 @@ function build_release_modules {
 # Should set version numbers in your modules
 # Parameter $1 - version as text
 function set_modules_version {
-  echo "Version: $1 - do nothing" >> /dev/null
+  sed -i .versionBackup "s/\(VERSION=\)[0-9a-zA-Z.-]*\( \#\)/\1$1\2/" .version.sh
 }

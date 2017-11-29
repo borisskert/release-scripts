@@ -1,4 +1,4 @@
- #!/bin/bash
+#!/bin/bash
 set -e
 
 SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -27,3 +27,11 @@ function check_local_workspace_state {
 	fi
 }
 
+function is_branch_existing {
+    if [ `git branch -a --list "$1"` ]
+    then
+      return 0
+    else
+      return 1
+    fi
+}
