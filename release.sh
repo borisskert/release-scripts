@@ -42,9 +42,11 @@ git checkout ${DEVELOP_BRANCH} && git pull ${REMOTE_REPO}
 git checkout -b ${RELEASE_BRANCH}
 
 build_snapshot_modules
+cd ${GIT_REPO_DIR}
 git reset --hard
 
 set_modules_version ${RELEASE_VERSION}
+cd ${GIT_REPO_DIR}
 
 if ! git diff-files --quiet --ignore-submodules --
 then
@@ -55,6 +57,7 @@ else
 fi
 
 build_release_modules
+cd ${GIT_REPO_DIR}
 git reset --hard
 
 # merge current develop (over release branch) into master
@@ -76,6 +79,7 @@ git checkout ${RELEASE_BRANCH}
 
 NEXT_SNAPSHOT_VERSION=`format_snapshot_version "${NEXT_VERSION}"`
 set_modules_version "${NEXT_SNAPSHOT_VERSION}"
+cd ${GIT_REPO_DIR}
 
 if ! git diff-files --quiet --ignore-submodules --
 then

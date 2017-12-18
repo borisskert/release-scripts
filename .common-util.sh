@@ -17,6 +17,7 @@ REMOTE_REPO=`get_remote_repo_name`
 DEVELOP_BRANCH=`get_develop_branch_name`
 MASTER_BRANCH=`get_master_branch_name`
 CURRENT_BRANCH=`git rev-parse --abbrev-ref HEAD`
+GIT_REPO_DIR=`git rev-parse --show-toplevel`
 
 function check_local_workspace_state {
 	if ! git diff-index --quiet HEAD --

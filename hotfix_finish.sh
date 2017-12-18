@@ -42,9 +42,11 @@ check_local_workspace_state "hotfix_finish"
 git checkout $HOTFIX_BRANCH && git pull $REMOTE_REPO
 
 build_snapshot_modules
+cd ${GIT_REPO_DIR}
 git reset --hard
 
 set_modules_version $HOTFIX_VERSION
+cd ${GIT_REPO_DIR}
 
 if ! git diff-files --quiet --ignore-submodules --
 then
@@ -55,6 +57,7 @@ else
 fi
 
 build_release_modules
+cd ${GIT_REPO_DIR}
 git reset --hard
 
 # merge current hotfix into master
@@ -70,6 +73,7 @@ git checkout ${HOTFIX_BRANCH}
 # prepare next snapshot version
 NEXT_SNAPSHOT_VERSION=`format_snapshot_version "${NEXT_VERSION}"`
 set_modules_version "${NEXT_SNAPSHOT_VERSION}"
+cd ${GIT_REPO_DIR}
 
 if ! git diff-files --quiet --ignore-submodules --
 then
