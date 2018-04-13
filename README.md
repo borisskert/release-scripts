@@ -11,11 +11,17 @@
 * copy all *.sh files into your project
 * adjust hooks.sh for your project environment
 
+## Integration as a submodule
+
+* $ git submodule add https://github.com/borisskert/release-scripts release-scripts
+* $ cp release-scripts/hooks.sh .release-scripts-hooks.sh
+* adjust .release-scripts-hooks.sh for your project environment
+
 ## Perform a standard release
 
     $ ./release.sh <release-version> <next snapshot/beta version>
     # Perform next steps the script is telling
-    
+
 ## Perform a hotfix release
 
     $ ./hotfix_start.sh <hotfix-version>

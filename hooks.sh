@@ -70,5 +70,6 @@ function build_release_modules {
 # Should set version numbers in your modules
 # Parameter $1 - version as text
 function set_modules_version {
+  # Please remove the following line for your project (it is used for release process of release-scripts itself):
   sed -i .versionBackup "s/\(VERSION=\)[0-9a-zA-Z.-]*\( \#\)/\1$1\2/" .version.sh
 }
