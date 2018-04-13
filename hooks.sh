@@ -23,6 +23,12 @@ function format_snapshot_version {
   echo "$1-SNAPSHOT"
 }
 
+# Hook method to define the remote repository name
+# Returns the name of the remote repository as text
+function get_remote_repo_name {
+  echo "origin"
+}
+
 # Hook method to define the develop branch name
 # Returns the develop branch name as text
 function get_develop_branch_name {
@@ -64,5 +70,5 @@ function build_release_modules {
 # Should set version numbers in your modules
 # Parameter $1 - version as text
 function set_modules_version {
-  echo "Version: $1 - do nothing" >> /dev/null
+  sed -i .versionBackup "s/\(VERSION=\)[0-9a-zA-Z.-]*\( \#\)/\1$1\2/" .version.sh
 }

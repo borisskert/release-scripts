@@ -8,8 +8,6 @@
 # *************************************************
 set -e
 
-SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
 # Hook method to format your release tag
 # Parameter $1 - version as text
 # Returns tag as text
