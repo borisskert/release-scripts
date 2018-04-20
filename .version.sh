@@ -1,3 +1,3 @@
 #!/bin/bash
 
-VERSION=0.10.0-SNAPSHOT #
+VERSION=0.10.0 #
