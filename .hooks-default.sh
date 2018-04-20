@@ -22,6 +22,12 @@ function format_snapshot_version {
   echo "$1-SNAPSHOT"
 }
 
+# Hook method to define the remote repository name
+# Returns the name of the remote repository as text
+function get_remote_repo_name {
+  echo "origin"
+}
+
 # Hook method to define the develop branch name
 # Returns the develop branch name as text
 function get_develop_branch_name {

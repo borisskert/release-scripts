@@ -9,13 +9,18 @@
 
 * checkout this repo
 * copy all *.sh files into your project
-* adjust hooks.sh for your project environment
+* adjust `hooks.sh` for your project environment
 
-## Integration as a submodule
+## Integration as a submodule (recommended)
 
-* $ git submodule add https://github.com/borisskert/release-scripts release-scripts
-* $ cp release-scripts/hooks.sh .release-scripts-hooks.sh
-* adjust .release-scripts-hooks.sh for your project environment
+* Perform this steps in terminal:
+
+```
+  $ git submodule add https://github.com/borisskert/release-scripts release-scripts
+  $ cp release-scripts/.hooks-default.sh .release-scripts-hooks.sh
+```
+
+* adjust `.release-scripts-hooks.sh` for your project environment
 
 ## Perform a standard release
 
