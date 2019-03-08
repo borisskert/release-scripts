@@ -36,3 +36,8 @@
 ## Revert a (local) release
 
     $ ./revert_release <release-version>
+
+## How to run unit tests over release scripts
+1. Install [bats-core](https://github.com/bats-core/bats-core)
+2. Go to tests directory
+3. Run `bats release.bats`
