@@ -29,10 +29,19 @@ function check_local_workspace_state {
 }
 
 function is_branch_existing {
-    if [ `git branch -a --list "$1"` ]
+    if [ `git branch -a --list | grep "$1"` ]
     then
       return 0
     else
       return 1
     fi
+}
+
+function is_workspace_synced {
+  if test "$(git rev-parse @{u})" = "$(git rev-parse HEAD)"
+  then
+    return 0
+  else
+    return 1
+  fi
 }

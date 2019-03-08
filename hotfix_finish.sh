@@ -64,7 +64,7 @@ git reset --hard
 git checkout ${MASTER_BRANCH} && git pull ${REMOTE_REPO}
 git merge --no-edit ${HOTFIX_BRANCH}
 
-# create release tag and push master
+# create release tag
 HOTFIX_TAG=`format_release_tag "${HOTFIX_VERSION}"`
 git tag -a "${HOTFIX_TAG}" -m "Release ${HOTFIX_VERSION}"
 
