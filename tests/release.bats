@@ -1,5 +1,6 @@
 #!/usr/bin/env bats
 #
+SRCDIR=`pwd`/..
 WORKDIR="${BATS_TMPDIR}/release-test-$(date '+%Y-%m-%d_%H-%M-%S')"
 LOCALREPO=${WORKDIR}/localrepo
 REMOTEREPO=${WORKDIR}/remoterepo
@@ -13,7 +14,8 @@ setup() {
 	git add somefile
 	git commit -m "add somefile"
 	git checkout -b develop
-	git submodule add ${BATS_TEST_DIRNAME}/.. release-scripts
+	mkdir release-scripts
+	find ${SRCDIR} -maxdepth 1 -type f -exec cp -a {} ./release-scripts \;
 	cp ${BATS_TEST_DIRNAME}/test-hooks.sh .release-scripts-hooks.sh
 	git add release-scripts
 	git commit -m "register release-scripts"
