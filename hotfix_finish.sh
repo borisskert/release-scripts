@@ -48,7 +48,7 @@ git reset --hard
 set_modules_version $HOTFIX_VERSION
 cd ${GIT_REPO_DIR}
 
-if ! git diff-files --quiet --ignore-submodules --
+if ! is_workspace_clean
 then
   # commit hotfix versions
   git commit -am "Release hotfix $HOTFIX_VERSION"
@@ -75,7 +75,7 @@ NEXT_SNAPSHOT_VERSION=`format_snapshot_version "${NEXT_VERSION}"`
 set_modules_version "${NEXT_SNAPSHOT_VERSION}"
 cd ${GIT_REPO_DIR}
 
-if ! git diff-files --quiet --ignore-submodules --
+if ! is_workspace_clean
 then
   # commit next snapshot versions
   git commit -am "Start next iteration with ${NEXT_SNAPSHOT_VERSION} after hotfix ${HOTFIX_VERSION}"

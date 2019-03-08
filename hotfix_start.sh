@@ -39,7 +39,7 @@ git checkout -b ${HOTFIX_BRANCH}
 set_modules_version ${HOTFIX_SNAPSHOT_VERSION}
 cd ${GIT_REPO_DIR}
 
-if ! git diff-files --quiet --ignore-submodules --
+if ! is_workspace_clean
 then
   # commit hotfix versions
   git commit -am "Start hotfix ${HOTFIX_SNAPSHOT_VERSION}"

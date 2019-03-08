@@ -11,16 +11,15 @@ setup() {
 	git clone "${REMOTEREPO}" "${LOCALREPO}"
 	cd "${LOCALREPO}"
 	echo "somedata" > somefile
+	git checkout -b develop
 	git add somefile
 	git commit -m "add somefile"
-	git checkout -b develop
 	mkdir release-scripts
 	find ${SRCDIR} -maxdepth 1 -type f -exec cp -a {} ./release-scripts \;
 	cp ${BATS_TEST_DIRNAME}/test-hooks.sh .release-scripts-hooks.sh
 	git add release-scripts
 	git commit -m "register release-scripts"
-	git push -u origin master develop
-	git branch -d master
+	git push -u origin develop
 }
 
 teardown() {
@@ -28,7 +27,7 @@ teardown() {
 	[[ -d "${WORKDIR}" ]] && rm -fr "${WORKDIR}"
 }
 
-@test "run release script from develop without local master" {
+@test "run release script from develop without remote master" {
 	# Given
 	git checkout develop
 	echo "some work" >> somefile
@@ -66,7 +65,7 @@ teardown() {
 	test "$(git rev-parse @{u})" = "$(git rev-parse HEAD)"
 }
 
-@test "run hotfix from develop without local master" {
+@test "run hotfix from develop without remote master" {
 	./release-scripts/release.sh 23.1 23.2
 	git push --atomic origin master develop --follow-tags
 	./release-scripts/hotfix_start.sh 23.1.1

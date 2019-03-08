@@ -39,7 +39,17 @@ fi
 check_local_workspace_state "release"
 
 git checkout ${DEVELOP_BRANCH} && git pull ${REMOTE_REPO}
-git checkout -b ${RELEASE_BRANCH}
+
+# check and create master branch if not present
+if is_branch_existing ${MASTER_BRANCH} || is_branch_existing remotes/${REMOTE_REPO}/${MASTER_BRANCH}
+then
+  git checkout ${MASTER_BRANCH} && git pull ${REMOTE_REPO}
+else
+  git checkout -b ${MASTER_BRANCH}
+  git push --set-upstream ${REMOTE_REPO} ${MASTER_BRANCH}
+fi
+
+git checkout ${DEVELOP_BRANCH} && git checkout -b ${RELEASE_BRANCH}
 
 build_snapshot_modules
 cd ${GIT_REPO_DIR}
@@ -48,7 +58,7 @@ git reset --hard
 set_modules_version ${RELEASE_VERSION}
 cd ${GIT_REPO_DIR}
 
-if ! git diff-files --quiet --ignore-submodules --
+if ! is_workspace_clean
 then
   # commit release versions
   git commit -am "Prepare release ${RELEASE_VERSION}"
@@ -61,14 +71,7 @@ cd ${GIT_REPO_DIR}
 git reset --hard
 
 # merge current develop (over release branch) into master
-if is_branch_existing ${MASTER_BRANCH} || is_branch_existing remotes/${REMOTE_REPO}/${MASTER_BRANCH}
-then
-  git checkout ${MASTER_BRANCH} && git pull ${REMOTE_REPO}
-else
-  git checkout -b ${MASTER_BRANCH}
-  git push --set-upstream ${REMOTE_REPO} ${MASTER_BRANCH}
-fi
-
+git checkout ${MASTER_BRANCH}
 git merge -X theirs --no-edit ${RELEASE_BRANCH}
 
 # create release tag on master
@@ -81,7 +84,7 @@ NEXT_SNAPSHOT_VERSION=`format_snapshot_version "${NEXT_VERSION}"`
 set_modules_version "${NEXT_SNAPSHOT_VERSION}"
 cd ${GIT_REPO_DIR}
 
-if ! git diff-files --quiet --ignore-submodules --
+if ! is_workspace_clean
 then
   # Commit next snapshot versions into develop
   git commit -am "Start next iteration with ${NEXT_SNAPSHOT_VERSION}"
