@@ -78,7 +78,9 @@ git merge -X theirs --no-edit ${RELEASE_BRANCH}
 RELEASE_TAG=`format_release_tag "${RELEASE_VERSION}"`
 git tag -a "${RELEASE_TAG}" -m "Release ${RELEASE_VERSION}"
 
-git checkout ${RELEASE_BRANCH}
+# merge release into develop
+git checkout ${DEVELOP_BRANCH}
+git merge -X theirs --no-edit ${RELEASE_BRANCH}
 
 NEXT_SNAPSHOT_VERSION=`format_snapshot_version "${NEXT_VERSION}"`
 set_modules_version "${NEXT_SNAPSHOT_VERSION}"
@@ -91,8 +93,6 @@ then
 else
   echo "Nothing to commit..."
 fi
-
-git checkout ${DEVELOP_BRANCH}
 
 if git merge --no-edit ${RELEASE_BRANCH}
 then

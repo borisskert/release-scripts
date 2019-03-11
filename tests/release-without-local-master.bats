@@ -62,7 +62,12 @@ teardown() {
 	[[ "$(cat version.txt)" == "23.1" ]] || cat version.txt "Incorrect master version"
 	cat somefile | grep "some work" > /dev/null
 
+	git checkout release-23.1
+	[[ "$(cat version.txt)" == "23.1" ]] || cat version.txt "Incorrect version in release-23.1"
+	cat somefile | grep "some work" > /dev/null
+
   # master should be pushed
+	git checkout master
 	test "$(git rev-parse @{u})" = "$(git rev-parse HEAD)"
 }
 

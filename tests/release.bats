@@ -38,12 +38,16 @@ teardown() {
 	git checkout develop
 	[[ "$(cat version.txt)" == "23.2-SNAPSHOT" ]] || cat version.txt "Incorrect next snapshot version"
 
-    git checkout v23.1
+  git checkout v23.1
 	[[ "$(cat version.txt)" == "23.1" ]] || cat version.txt "Incorrect release version"
 	cat somefile | grep "some work" > /dev/null
 
-    git checkout master
+  git checkout master
 	[[ "$(cat version.txt)" == "23.1" ]] || cat version.txt "Incorrect master version"
+	cat somefile | grep "some work" > /dev/null
+
+	git checkout release-23.1
+	[[ "$(cat version.txt)" == "23.1" ]] || cat version.txt "Incorrect version in release-23.1"
 	cat somefile | grep "some work" > /dev/null
 }
 
