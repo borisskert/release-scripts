@@ -37,6 +37,31 @@
 
     $ ./revert_release <release-version>
 
+## Support branches
+If you need to make releases from support branches and also from develop, take care to adjust your hooks
+to calculate master and develop branches according to versions.
+
+Example: For releasing versions that start with `12.`, i.e. `12.2` we'll use `support-12.x` branch, otherwise `develop` branch:
+```bash
+function get_develop_branch_name {
+  if [[ "$1" =~ ^12\..* ]]
+  then
+    echo "support-12.x"
+  else
+    echo "develop"
+  fi
+}
+
+function get_master_branch_name {
+  if [[ "$1"  =~ ^12\..* ]]
+  then
+    echo "master-12.x"
+  else
+    echo "master"
+  fi
+}
+```
+
 ## How to run unit tests over release scripts
 1. Install [bats-core](https://github.com/bats-core/bats-core)
 2. Go to tests directory

@@ -11,21 +11,21 @@ fi
 
 echo "Release scripts (release, version: ${VERSION})"
 
-if [ -f "${SCRIPT_PATH}/.common-util.sh" ]; then
-	source ${SCRIPT_PATH}/.common-util.sh
-else
-	echo 'Missing file .common-util.sh. Aborting'
-	exit -1
-fi
-
-RELEASE_VERSION=$1
-NEXT_VERSION=$2
-
 if [ $# -ne 2 ]
 then
   echo 'Usage: release.sh <release-version> <next-snapshot-version>'
   echo 'For example: release.sh 0.1.0 0.2.0'
   exit 2
+fi
+
+RELEASE_VERSION=$1
+NEXT_VERSION=$2
+
+if [ -f "${SCRIPT_PATH}/.common-util.sh" ]; then
+	source ${SCRIPT_PATH}/.common-util.sh
+else
+	echo 'Missing file .common-util.sh. Aborting'
+	exit -1
 fi
 
 RELEASE_BRANCH=`format_release_branch_name "$RELEASE_VERSION"`

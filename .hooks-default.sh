@@ -29,12 +29,14 @@ function get_remote_repo_name {
 }
 
 # Hook method to define the develop branch name
+# Parameter $1 - current release version as text
 # Returns the develop branch name as text
 function get_develop_branch_name {
   echo "develop"
 }
 
 # Hook method to define the master branch name
+# Parameter $1 - current release version as text
 # Returns the master branch name as text
 function get_master_branch_name {
   echo "master"

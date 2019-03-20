@@ -11,13 +11,6 @@ fi
 
 echo "Release scripts (revert-release, version: ${VERSION})"
 
-if [ -f "${SCRIPT_PATH}/.common-util.sh" ]; then
-	source ${SCRIPT_PATH}/.common-util.sh
-else
-	echo 'Missing file .common-util.sh. Aborting'
-	exit -1
-fi
-
 if [[ $# -ne 1 && $# -ne 2 ]]
 then
   echo 'Usage: revert_release.sh <release-version>'
@@ -26,6 +19,13 @@ then
 fi
 
 RELEASE_VERSION=$1
+
+if [ -f "${SCRIPT_PATH}/.common-util.sh" ]; then
+	source ${SCRIPT_PATH}/.common-util.sh
+else
+	echo 'Missing file .common-util.sh. Aborting'
+	exit -1
+fi
 
 RELEASE_BRANCH=`format_release_branch_name "${RELEASE_VERSION}"`
 

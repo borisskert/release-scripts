@@ -11,13 +11,6 @@ fi
 
 echo "Release scripts (hotfix-start, version: ${VERSION})"
 
-if [ -f "${SCRIPT_PATH}/.common-util.sh" ]; then
-	source ${SCRIPT_PATH}/.common-util.sh
-else
-	echo 'Missing file .common-util.sh. Aborting'
-	exit -1
-fi
-
 if [ $# -ne 1 ]
 then
   echo 'Usage: hotfix_start.sh <hotfix-version>'
@@ -28,6 +21,18 @@ fi
 
 HOTFIX_VERSION=$1
 HOTFIX_SNAPSHOT_VERSION="${HOTFIX_VERSION}-SNAPSHOT"
+
+# Necessary to calculate develop/master branch name
+RELEASE_VERSION=${HOTFIX_VERSION}
+
+if [ -f "${SCRIPT_PATH}/.common-util.sh" ]; then
+	source ${SCRIPT_PATH}/.common-util.sh
+else
+	echo 'Missing file .common-util.sh. Aborting'
+	exit -1
+fi
+
+unset RELEASE_VERSION
 
 HOTFIX_BRANCH=`format_hotfix_branch_name "${HOTFIX_VERSION}"`
 

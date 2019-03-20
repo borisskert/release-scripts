@@ -1,9 +1,6 @@
 #!/usr/bin/env bats
-#
-SRCDIR=`pwd`/..
-WORKDIR="${BATS_TMPDIR}/release-test-$(date '+%Y-%m-%d_%H-%M-%S')"
-LOCALREPO=${WORKDIR}/localrepo
-REMOTEREPO=${WORKDIR}/remoterepo
+
+load tests-common-functions
 
 setup() {
 	mkdir -p "${LOCALREPO}" "${REMOTEREPO}"
@@ -23,8 +20,7 @@ setup() {
 }
 
 teardown() {
-	cd ..
-	[[ -d "${WORKDIR}" ]] && rm -fr "${WORKDIR}"
+	remove_workdir
 }
 
 @test "run release script from develop without remote master" {
