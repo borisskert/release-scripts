@@ -12,5 +12,5 @@ set -e
 # Parameter $1 - version as text
 function set_modules_version {
   # The following line is used for release process of release-scripts itself:
-  sed -i .versionBackup "s/\(VERSION=\)[0-9a-zA-Z.-]*\( \#\)/\1$1\2/" .version.sh
+  sed -i .versionBackup "s/\(export VERSION=\)[0-9a-zA-Z.-]*\( \#\)/\1$1\2/" .version.sh
 }

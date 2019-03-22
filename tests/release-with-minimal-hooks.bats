@@ -95,7 +95,6 @@ teardown() {
 
   git checkout v23.1.1
 	[ "$(cat version.txt)" == "23.1.1" ]
-	git adog
 	[ "$(git log -1 --pretty=%B)" == "Release hotfix 23.1.1" ]
 
   git checkout master

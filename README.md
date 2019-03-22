@@ -1,4 +1,4 @@
-# release-scripts
+# release-scripts [![Build Status](https://travis-ci.com/borisskert/release-scripts.svg?branch=master)](https://travis-ci.com/borisskert/release-scripts)
 
 ## Requirements
 
@@ -66,3 +66,11 @@ function get_master_branch_name {
 1. Install [bats-core](https://github.com/bats-core/bats-core)
 2. Go to tests directory
 3. Run `bats *.bats`
+
+## How to run shellcheck
+
+```bash
+$ shellcheck *.sh
+```
+
+Make sure you have installed [shellcheck](https://www.shellcheck.net/) on your system.

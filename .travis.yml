@@ -1,0 +1,17 @@
+sudo: false
+language: bash
+
+services:
+  - docker
+
+addons:
+  apt:
+    sources:
+      - sourceline: 'ppa:duggan/bats'
+    packages:
+      - bats
+      - shellcheck
+
+script:
+  - ./.travis-ci/run-bats-tests.sh
+  - ./.travis-ci/run-shellcheck.sh
