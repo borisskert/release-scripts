@@ -61,7 +61,8 @@ cd ${GIT_REPO_DIR}
 if ! is_workspace_clean
 then
   # commit release versions
-  git commit -am "Prepare release ${RELEASE_VERSION}"
+  RELEASE_COMMIT_MESSAGE=`get_release_commit_message "${RELEASE_VERSION}"`
+  git commit -am "${RELEASE_COMMIT_MESSAGE}"
 else
   echo "Nothing to commit..."
 fi
@@ -76,7 +77,8 @@ git merge -X theirs --no-edit ${RELEASE_BRANCH}
 
 # create release tag on master
 RELEASE_TAG=`format_release_tag "${RELEASE_VERSION}"`
-git tag -a "${RELEASE_TAG}" -m "Release ${RELEASE_VERSION}"
+RELEASE_TAG_MESSAGE=`get_release_tag_message "${RELEASE_VERSION}"`
+git tag -a "${RELEASE_TAG}" -m "${RELEASE_TAG_MESSAGE}"
 
 # merge release into develop
 git checkout ${DEVELOP_BRANCH}
@@ -89,7 +91,8 @@ cd ${GIT_REPO_DIR}
 if ! is_workspace_clean
 then
   # Commit next snapshot versions into develop
-  git commit -am "Start next iteration with ${NEXT_SNAPSHOT_VERSION}"
+  SNAPSHOT_COMMIT_MESSAGE=`get_next_snapshot_commit_message "${NEXT_SNAPSHOT_VERSION}"`
+  git commit -am "${SNAPSHOT_COMMIT_MESSAGE}"
 else
   echo "Nothing to commit..."
 fi

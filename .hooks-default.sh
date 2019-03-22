@@ -73,3 +73,46 @@ function build_release_modules {
 function set_modules_version {
   echo "Version: $1 - do nothing" >> /dev/null
 }
+
+# Builds the commit message used for your release commit
+# Parameter $1 - release version as text
+function get_release_commit_message {
+  echo "Prepare release $1"
+}
+
+# Builds the commit message used for your commit which setups the next snapshot version
+# Parameter $1 - release version as text
+function get_next_snapshot_commit_message {
+  echo "Start next iteration with $1"
+}
+
+# Builds the tag message used for your release tag
+# Parameter $1 - release version as text
+function get_release_tag_message {
+  echo "Release $1"
+}
+
+# Builds the commit message for your commit which setups the hotfix branch
+# Parameter $1 - hotfix snapshot version
+function get_start_hotfix_commit_message {
+  echo "Start hotfix $1"
+}
+
+# Builds the chommit message for your hotfix release commit
+# Parameter $1 - hotfix release version
+function get_release_hotfix_commit_message {
+  echo "Release hotfix $1"
+}
+
+# Builds the tag message used for your hotfix release tag
+# Parameter $1 - hotfix release version
+function get_hotfix_relesae_tag_message {
+  echo "Release $1"
+}
+
+# Builds the commit message used for setup the next snapshot version after hotfix is released
+# Parameter $1 - next snapshot version
+# Parameter $2 - released hotfix version
+function get_next_snapshot_commit_message_after_hotfix {
+  echo "Start next iteration with $1 after hotfix $2"
+}

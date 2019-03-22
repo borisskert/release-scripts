@@ -47,7 +47,8 @@ cd ${GIT_REPO_DIR}
 if ! is_workspace_clean
 then
   # commit hotfix versions
-  git commit -am "Start hotfix ${HOTFIX_SNAPSHOT_VERSION}"
+  START_HOTFOX_COMMIT_MESSAGE=`get_start_hotfix_commit_message "${HOTFIX_SNAPSHOT_VERSION}"`
+  git commit -am "${START_HOTFOX_COMMIT_MESSAGE}"
 else
   echo "Nothing to commit..."
 fi

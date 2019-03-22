@@ -56,7 +56,8 @@ cd ${GIT_REPO_DIR}
 if ! is_workspace_clean
 then
   # commit hotfix versions
-  git commit -am "Release hotfix $HOTFIX_VERSION"
+  HOTFIX_RELEASE_COMMIT_MESSAGE=`get_release_hotfix_commit_message "${HOTFIX_VERSION}"`
+  git commit -am "${HOTFIX_RELEASE_COMMIT_MESSAGE}"
 else
   echo "Nothing to commit..."
 fi
@@ -71,7 +72,8 @@ git merge --no-edit ${HOTFIX_BRANCH}
 
 # create release tag
 HOTFIX_TAG=`format_release_tag "${HOTFIX_VERSION}"`
-git tag -a "${HOTFIX_TAG}" -m "Release ${HOTFIX_VERSION}"
+HOTFIX_TAG_MESSAGE=`get_hotfix_relesae_tag_message "${HOTFIX_VERSION}"`
+git tag -a "${HOTFIX_TAG}" -m "${HOTFIX_TAG_MESSAGE}"
 
 git checkout ${HOTFIX_BRANCH}
 
@@ -83,7 +85,8 @@ cd ${GIT_REPO_DIR}
 if ! is_workspace_clean
 then
   # commit next snapshot versions
-  git commit -am "Start next iteration with ${NEXT_SNAPSHOT_VERSION} after hotfix ${HOTFIX_VERSION}"
+  SNAPSHOT_AFTER_HOTFIX_COMMIT_MESSAGE=`get_next_snapshot_commit_message_after_hotfix "${NEXT_SNAPSHOT_VERSION}" "${HOTFIX_VERSION}"`
+  git commit -am "${SNAPSHOT_AFTER_HOTFIX_COMMIT_MESSAGE}"
 else
   echo "Nothing to commit..."
 fi

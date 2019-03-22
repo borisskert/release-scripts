@@ -19,6 +19,9 @@ init_repo() {
 	cp ${BATS_TEST_DIRNAME}/test-hooks.sh .release-scripts-hooks.sh
 	git add release-scripts .release-scripts-hooks.sh
 	git commit -m "register release-scripts"
+	echo "no version set" > version.txt
+	git add version.txt
+  git commit -m "set version number $(echo $1)" version.txt
 	git push -u origin master develop
 }
 

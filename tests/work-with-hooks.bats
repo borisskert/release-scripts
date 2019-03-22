@@ -30,15 +30,18 @@ teardown() {
   git checkout v12.3
 	[[ "$(cat version.txt)" == "12.3" ]] || cat version.txt "Incorrect release tag version"
 	cat somefile | grep "some support-12 work" > /dev/null
+	[[ "$(git log -1 --pretty=%B)" == "[TEST] Prepare release 12.3" ]] || cat version.txt "Incorrect commit message"
 
 	git checkout master-12.x
 	[[ "$(cat version.txt)" == "12.3" ]] || cat version.txt "Incorrect master-12.x version"
 	cat somefile | grep "some support-12 work" > /dev/null
+	[[ "$(git log -1 --pretty=%B)" == "[TEST] Prepare release 12.3" ]] || cat version.txt "Incorrect commit message"
 
 	git checkout master
 	# Since master never ever got released before, there should be no file version.txt
 	[[ ! -f version.txt ]] || cat version.txt "Incorrect master version"
 	! cat somefile | grep 'some support-12 work'
+	[[ "$(git log -1 --pretty=%B)" == "add somefile" ]] || cat version.txt "Incorrect commit message"
 
   git checkout develop
   ./release-scripts/release.sh 23.1 23.2
