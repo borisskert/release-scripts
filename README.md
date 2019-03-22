@@ -1,5 +1,13 @@
 # release-scripts [![Build Status](https://travis-ci.com/borisskert/release-scripts.svg?branch=master)](https://travis-ci.com/borisskert/release-scripts)
 
+## Description
+
+This scripts can help you if you have are working in a [git-flow](https://danielkummer.github.io/git-flow-cheatsheet/)
+ workflow on your project.
+
+Especially the release and hotfix step of git-flow requires a lot commits and merge
+ processes this scripts can help your out. Your can use them locally as well as in ci-pipelines.
+
 ## Requirements
 
 * bash terminal
