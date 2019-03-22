@@ -1,3 +1,3 @@
 #!/bin/bash
 
-export VERSION=0.14.0 #
+export VERSION=0.15.0-SNAPSHOT #
