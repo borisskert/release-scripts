@@ -3,8 +3,9 @@ set -e
 
 SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-if [ -f "${SCRIPT_PATH}/.version.sh" ]; then
-	# shellcheck source=.version.sh
+if [[ -f "${SCRIPT_PATH}/.version.sh" ]]
+then
+  # shellcheck source=.version.sh
   source "${SCRIPT_PATH}/.version.sh"
 else
 	VERSION="UNKNOWN VERSION"
@@ -21,7 +22,8 @@ fi
 
 RELEASE_VERSION=$1
 
-if [ -f "${SCRIPT_PATH}/.common-util.sh" ]; then
+if [[ -f "${SCRIPT_PATH}/.common-util.sh" ]]
+then
   # shellcheck source=.common-util.sh
 	source "${SCRIPT_PATH}/.common-util.sh"
 else

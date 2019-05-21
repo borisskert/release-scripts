@@ -3,7 +3,8 @@ set -e
 
 SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-if [ -f "${SCRIPT_PATH}/.version.sh" ]; then
+if [[ -f "${SCRIPT_PATH}/.version.sh" ]]
+then
   # shellcheck source=.version.sh
 	source "${SCRIPT_PATH}/.version.sh"
 else
@@ -12,22 +13,29 @@ fi
 
 echo "Release scripts (hotfix-start, version: ${VERSION})"
 
-if [ $# -ne 1 ]
+if [[ $# -lt 1 || $# -gt 2 ]]
 then
-  echo 'Usage: hotfix_start.sh <hotfix-version>'
-  echo 'For example:'
-  echo 'hotfix_start.sh 0.2.1'
+  echo 'Usage: hotfix_start.sh <hotfix-version> [--without-snapshot]'
+  echo 'For example: hotfix_start.sh 0.2.1'
+  echo 'or without snapshot: hotfix_start.sh 0.2.1 --without-snapshot'
   exit 2
 fi
 
 HOTFIX_VERSION=$1
-HOTFIX_SNAPSHOT_VERSION="${HOTFIX_VERSION}-SNAPSHOT"
+
+if [[ "${2}" = "--without-snapshot" ]]
+then
+  HOTFIX_MODULE_VERSION="${HOTFIX_VERSION}"
+else
+  HOTFIX_MODULE_VERSION="${HOTFIX_VERSION}-SNAPSHOT"
+fi
 
 # Necessary to calculate develop/master branch name
 RELEASE_VERSION=${HOTFIX_VERSION}
 
-if [ -f "${SCRIPT_PATH}/.common-util.sh" ]; then
-	# shellcheck source=.common-util.sh
+if [[ -f "${SCRIPT_PATH}/.common-util.sh" ]]
+then
+  # shellcheck source=.common-util.sh
 	source "${SCRIPT_PATH}/.common-util.sh"
 else
 	echo 'Missing file .common-util.sh. Aborting'
@@ -43,14 +51,14 @@ check_local_workspace_state "hotfix_start"
 git checkout "${MASTER_BRANCH}" && git pull "${REMOTE_REPO}"
 git checkout -b "${HOTFIX_BRANCH}"
 
-set_modules_version "${HOTFIX_SNAPSHOT_VERSION}"
+set_modules_version "${HOTFIX_MODULE_VERSION}"
 cd "${GIT_REPO_DIR}"
 
 if ! is_workspace_clean
 then
   # commit hotfix versions
-  START_HOTFOX_COMMIT_MESSAGE=$(get_start_hotfix_commit_message "${HOTFIX_SNAPSHOT_VERSION}")
-  git commit -am "${START_HOTFOX_COMMIT_MESSAGE}"
+  START_HOTFIX_COMMIT_MESSAGE=$(get_start_hotfix_commit_message "${HOTFIX_MODULE_VERSION}")
+  git commit -am "${START_HOTFIX_COMMIT_MESSAGE}"
 else
   echo "Nothing to commit..."
 fi

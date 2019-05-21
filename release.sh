@@ -14,16 +14,25 @@ echo "Release scripts (release, version: ${VERSION})"
 
 if [ $# -ne 2 ]
 then
-  echo 'Usage: release.sh <release-version> <next-snapshot-version>'
+  echo 'Usage: release.sh <release-version> ( <next-snapshot-version> | --without-snapshot )'
   echo 'For example: release.sh 0.1.0 0.2.0'
+  echo 'or in case you dont want snapshot-versions: release.sh 0.1.0 --without-snapshot'
   exit 2
 fi
 
 RELEASE_VERSION=$1
-NEXT_VERSION=$2
 
-if [ -f "${SCRIPT_PATH}/.common-util.sh" ]; then
-	# shellcheck source=.common-util.sh
+if [[ "${2}" = "--without-snapshot" ]]
+then
+  DO_SNAPSHOT=false
+else
+  DO_SNAPSHOT=true
+  NEXT_VERSION=$2
+fi
+
+if [[ -f "${SCRIPT_PATH}/.common-util.sh" ]]
+then
+  # shellcheck source=.common-util.sh
 	source "${SCRIPT_PATH}/.common-util.sh"
 else
 	echo 'Missing file .common-util.sh. Aborting'
@@ -32,7 +41,7 @@ fi
 
 RELEASE_BRANCH=$(format_release_branch_name "$RELEASE_VERSION")
 
-if [ ! "${CURRENT_BRANCH}" = "${DEVELOP_BRANCH}" ]
+if [[ ! "${CURRENT_BRANCH}" = "${DEVELOP_BRANCH}" ]]
 then
   echo "Please checkout the branch '${DEVELOP_BRANCH}' before processing this release script."
   exit 1
@@ -86,8 +95,13 @@ git tag -a "${RELEASE_TAG}" -m "${RELEASE_TAG_MESSAGE}"
 git checkout "${DEVELOP_BRANCH}"
 git merge -X theirs --no-edit "${RELEASE_BRANCH}"
 
-NEXT_SNAPSHOT_VERSION=$(format_snapshot_version "${NEXT_VERSION}")
-set_modules_version "${NEXT_SNAPSHOT_VERSION}"
+# prepare next snapshot version if necessary
+if [[ "${DO_SNAPSHOT}" = "true" ]]
+then
+  NEXT_SNAPSHOT_VERSION=$(format_snapshot_version "${NEXT_VERSION}")
+  set_modules_version "${NEXT_SNAPSHOT_VERSION}"
+fi
+
 cd "${GIT_REPO_DIR}"
 
 if ! is_workspace_clean
