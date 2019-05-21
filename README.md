@@ -32,14 +32,29 @@ Especially the release and hotfix step of git-flow requires a lot commits and me
 
 ## Perform a standard release
 
+### with snapshot versions
+
     $ ./release.sh <release-version> <next snapshot/beta version>
+    # Perform next steps the script is telling
+
+### without snapshot versions
+
+    $ ./release.sh <release-version> --without-snapshot
     # Perform next steps the script is telling
 
 ## Perform a hotfix release
 
+### with snapshot versions
+
     $ ./hotfix_start.sh <hotfix-version>
     # commit and push your work into the hotfix-branch
     $ ./hotfix_finish.sh <hotfix-version> <current snapshot/beta version>
+
+### without snapshot versions
+
+    $ ./hotfix_start.sh <hotfix-version> --without-snapshot
+    # commit and push your work into the hotfix-branch
+    $ ./hotfix_finish.sh <hotfix-version> --without-snapshot
 
 ## Revert a (local) release
 
@@ -78,7 +93,7 @@ function get_master_branch_name {
 ## How to run shellcheck
 
 ```bash
-$ shellcheck *.sh
+$ find . -maxdepth 1 -type f -name '*.sh' -print0 | xargs -0 shellcheck
 ```
 
 Make sure you have installed [shellcheck](https://www.shellcheck.net/) on your system.
