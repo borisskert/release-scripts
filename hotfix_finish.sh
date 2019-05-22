@@ -4,7 +4,7 @@ set -e
 SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 if [ -f "${SCRIPT_PATH}/.version.sh" ]; then
-  # shellcheck source=.version.sh
+  # shellcheck source=./.version.sh
 	source "${SCRIPT_PATH}/.version.sh"
 else
 	VERSION="UNKNOWN VERSION"
@@ -14,14 +14,21 @@ echo "Release scripts (hotfix-finish, version: ${VERSION})"
 
 if [ $# -ne 2 ]
 then
-  echo 'Usage: hotfix_finish.sh <hotfix-version> <next-snapshot-version>'
-  echo 'For example:'
-  echo 'hotfix_finish.sh 0.2.1 0.3.0'
+  echo 'Usage: hotfix_finish.sh <hotfix-version> ( <next-snapshot-version> | --without-snapshot )'
+  echo 'For example: hotfix_finish.sh 0.2.1 0.3.0'
+  echo 'or in case you dont want snapshot-versions: hotfix_finish.sh 0.2.1 --without-snapshot'
   exit 2
 fi
 
 HOTFIX_VERSION=$1
-NEXT_VERSION=$2
+
+if [[ "${2}" = "--without-snapshot" ]]
+then
+  DO_SNAPSHOT=false
+else
+  DO_SNAPSHOT=true
+  NEXT_VERSION=$2
+fi
 
 # Necessary to calculate develop/master branch name
 RELEASE_VERSION=${HOTFIX_VERSION}
@@ -79,9 +86,13 @@ git tag -a "${HOTFIX_TAG}" -m "${HOTFIX_TAG_MESSAGE}"
 
 git checkout "${HOTFIX_BRANCH}"
 
-# prepare next snapshot version
-NEXT_SNAPSHOT_VERSION=$(format_snapshot_version "${NEXT_VERSION}")
-set_modules_version "${NEXT_SNAPSHOT_VERSION}"
+# prepare next snapshot version if necessary
+if [[ "${DO_SNAPSHOT}" = "true" ]]
+then
+  NEXT_SNAPSHOT_VERSION=$(format_snapshot_version "${NEXT_VERSION}")
+  set_modules_version "${NEXT_SNAPSHOT_VERSION}"
+fi
+
 cd "${GIT_REPO_DIR}"
 
 if ! is_workspace_clean

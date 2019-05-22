@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-find . -name '*.sh' -maxdepth 1 -type f -print0 | xargs -0 \
+find . -maxdepth 1 -type f -name '*.sh' -print0 | xargs -0 \
 docker run \
   --rm \
   -v "$(pwd):/tmp/src" \
