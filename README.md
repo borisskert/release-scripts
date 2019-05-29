@@ -39,8 +39,22 @@ Especially the release and hotfix step of git-flow requires a lot commits and me
 
 ### without snapshot versions
 
-    $ ./release.sh <release-version> --without-snapshot
+    $ ./release.sh --snapshots=false <release-version>
     # Perform next steps the script is telling
+
+## Usage
+
+```
+$ ./release.sh [-s|--snapshots[=<true|false>]] [-q|--quiet[=<true|false>]] [-v|--verbose[=<true|false>]] <release-version> [ <next snapshot/beta version> ]
+```
+
+### Options
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| -s , --snapshots | true | Defines if using snapshot versions or not. If defined true the next snapshot argument is mandatory |
+| -q,  --quiet     | false | Quiet mode for automation |
+| -v, --verbose    | false | Verbose mode which printing some more information for debugging etc. |
 
 ## Perform a hotfix release
 
@@ -52,9 +66,9 @@ Especially the release and hotfix step of git-flow requires a lot commits and me
 
 ### without snapshot versions
 
-    $ ./hotfix_start.sh <hotfix-version> --without-snapshot
+    $ ./hotfix_start.sh --snapshots=false <hotfix-version>
     # commit and push your work into the hotfix-branch
-    $ ./hotfix_finish.sh <hotfix-version> --without-snapshot
+    $ ./hotfix_finish.sh --snapshots=false <hotfix-version>
 
 ## Revert a (local) release
 

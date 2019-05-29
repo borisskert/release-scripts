@@ -3,18 +3,21 @@ set -e
 
 SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-if [ -f "${SCRIPT_PATH}/.version.sh" ]; then
+if [[ -f "${SCRIPT_PATH}/.version.sh" ]]
+then
   # shellcheck source=.version.sh
   source "${SCRIPT_PATH}/.version.sh"
 else
 	VERSION="UNKNOWN VERSION"
 fi
 
-echo "Release scripts (release, version: ${VERSION})"
+# shellcheck source=.parse-arguments.sh
+source "${SCRIPT_PATH}/.parse-arguments.sh"
 
-if [ $# -ne 2 ]
+if [[ "${SNAPSHOTS}" = true && "${#ARGUMENTS[@]}" -ne 2 ]]
 then
-  echo 'Usage: release.sh <release-version> ( <next-snapshot-version> | --without-snapshot )'
+  echo "Release scripts (release, version: ${VERSION})"
+  echo 'Usage: release.sh [-q|--quiet] [-v|--verbose] [-s|--snapshots] <release-version> ( <next-snapshot-version> )'
   echo 'For example: release.sh 0.1.0 0.2.0'
   echo 'or in case you dont want snapshot-versions: release.sh 0.1.0 --without-snapshot'
   exit 2
@@ -22,22 +25,28 @@ fi
 
 RELEASE_VERSION=$1
 
-if [[ "${2}" = "--without-snapshot" ]]
+if [[ "${SNAPSHOTS}" = true ]]
 then
-  DO_SNAPSHOT=false
-else
-  DO_SNAPSHOT=true
   NEXT_VERSION=$2
+fi
+
+if [[ "${VERBOSE}" = true ]]
+then
+  OUT=/dev/stdout
+else
+  OUT=/dev/null
 fi
 
 if [[ -f "${SCRIPT_PATH}/.common-util.sh" ]]
 then
   # shellcheck source=.common-util.sh
-	source "${SCRIPT_PATH}/.common-util.sh"
+	source "${SCRIPT_PATH}/.common-util.sh" >> ${OUT}
 else
 	echo 'Missing file .common-util.sh. Aborting'
 	exit 1
 fi
+
+print_message "Release scripts (release, version: ${VERSION})"
 
 RELEASE_BRANCH=$(format_release_branch_name "$RELEASE_VERSION")
 
@@ -47,44 +56,52 @@ then
   exit 1
 fi
 
-check_local_workspace_state "release"
+if ! is_workspace_clean
+then
+  echo "This script is only safe when your have a clean workspace."
+  echo "Please clean your workspace by stashing or committing and pushing changes before processing this script."
+  exit 1
+fi
 
-git checkout "${DEVELOP_BRANCH}" && git pull "${REMOTE_REPO}"
+git checkout --quiet "${DEVELOP_BRANCH}"
+git pull --quiet "${REMOTE_REPO}"
 
 # check and create master branch if not present
 if is_branch_existing "${MASTER_BRANCH}" || is_branch_existing "remotes/${REMOTE_REPO}/${MASTER_BRANCH}"
 then
-  git checkout "${MASTER_BRANCH}" && git pull "${REMOTE_REPO}"
+  git checkout --quiet "${MASTER_BRANCH}"
+  git pull --quiet "${REMOTE_REPO}"
 else
-  git checkout -b "${MASTER_BRANCH}"
+  git checkout --quiet -b "${MASTER_BRANCH}"
   git push --set-upstream "${REMOTE_REPO}" "${MASTER_BRANCH}"
 fi
 
-git checkout "${DEVELOP_BRANCH}" && git checkout -b "${RELEASE_BRANCH}"
+git checkout --quiet "${DEVELOP_BRANCH}"
+git checkout --quiet -b "${RELEASE_BRANCH}"
 
-build_snapshot_modules
+build_snapshot_modules >> ${OUT}
 cd "${GIT_REPO_DIR}"
-git reset --hard
+git reset --quiet --hard
 
-set_modules_version "${RELEASE_VERSION}"
+set_modules_version "${RELEASE_VERSION}" >> ${OUT}
 cd "${GIT_REPO_DIR}"
 
 if ! is_workspace_clean
 then
   # commit release versions
   RELEASE_COMMIT_MESSAGE=$(get_release_commit_message "${RELEASE_VERSION}")
-  git commit -am "${RELEASE_COMMIT_MESSAGE}"
+  git commit --quiet -am "${RELEASE_COMMIT_MESSAGE}"
 else
-  echo "Nothing to commit..."
+  print_message "Nothing to commit..."
 fi
 
-build_release_modules
+build_release_modules >> ${OUT}
 cd "${GIT_REPO_DIR}"
-git reset --hard
+git reset --quiet --hard
 
 # merge current develop (over release branch) into master
-git checkout "${MASTER_BRANCH}"
-git merge -X theirs --no-edit "${RELEASE_BRANCH}"
+git checkout --quiet "${MASTER_BRANCH}"
+git merge --quiet -X theirs --no-edit "${RELEASE_BRANCH}"
 
 # create release tag on master
 RELEASE_TAG=$(format_release_tag "${RELEASE_VERSION}")
@@ -92,14 +109,14 @@ RELEASE_TAG_MESSAGE=$(get_release_tag_message "${RELEASE_VERSION}")
 git tag -a "${RELEASE_TAG}" -m "${RELEASE_TAG_MESSAGE}"
 
 # merge release into develop
-git checkout "${DEVELOP_BRANCH}"
-git merge -X theirs --no-edit "${RELEASE_BRANCH}"
+git checkout --quiet "${DEVELOP_BRANCH}"
+git merge --quiet -X theirs --no-edit "${RELEASE_BRANCH}"
 
 # prepare next snapshot version if necessary
-if [[ "${DO_SNAPSHOT}" = "true" ]]
+if [[ "${SNAPSHOTS}" = "true" ]]
 then
   NEXT_SNAPSHOT_VERSION=$(format_snapshot_version "${NEXT_VERSION}")
-  set_modules_version "${NEXT_SNAPSHOT_VERSION}"
+  set_modules_version "${NEXT_SNAPSHOT_VERSION}" >> ${OUT}
 fi
 
 cd "${GIT_REPO_DIR}"
@@ -108,21 +125,21 @@ if ! is_workspace_clean
 then
   # Commit next snapshot versions into develop
   SNAPSHOT_COMMIT_MESSAGE=$(get_next_snapshot_commit_message "${NEXT_SNAPSHOT_VERSION}")
-  git commit -am "${SNAPSHOT_COMMIT_MESSAGE}"
+  git commit --quiet -am "${SNAPSHOT_COMMIT_MESSAGE}"
 else
-  echo "Nothing to commit..."
+  print_message "Nothing to commit..."
 fi
 
-if git merge --no-edit "${RELEASE_BRANCH}"
+if git merge --quiet --no-edit "${RELEASE_BRANCH}"
 then
-  # Nope, doing that automtically is too dangerous. But the command is great!
-  echo "# Okay, now you've got a new tag and commits on ${MASTER_BRANCH} and ${DEVELOP_BRANCH}."
-  echo "# Please check if everything looks as expected and then push."
-  echo "# Use this command to push all at once or nothing, if anything goes wrong:"
-  echo "git push --atomic ${REMOTE_REPO} ${MASTER_BRANCH} ${DEVELOP_BRANCH} --follow-tags # all or nothing"
+  # Nope, doing that automatically is too dangerous. But the command is great!
+  print_message "# Okay, now you've got a new tag and commits on ${MASTER_BRANCH} and ${DEVELOP_BRANCH}."
+  print_message "# Please check if everything looks as expected and then push."
+  print_message "# Use this command to push all at once or nothing, if anything goes wrong:"
+  print_message "git push --atomic ${REMOTE_REPO} ${MASTER_BRANCH} ${DEVELOP_BRANCH} --follow-tags # all or nothing"
 else
-  echo "# Okay, you have got a conflict while merging onto ${DEVELOP_BRANCH}"
-  echo "# but don't panic, in most cases you can easily resolve the conflicts (in some cases you even do not need to merge all)."
-  echo "# Please do so and finish the release process with the following command:"
-  echo "git push --atomic ${REMOTE_REPO} ${MASTER_BRANCH} ${DEVELOP_BRANCH} --follow-tags # all or nothing"
+  print_message "# Okay, you have got a conflict while merging onto ${DEVELOP_BRANCH}"
+  print_message "# but don't panic, in most cases you can easily resolve the conflicts (in some cases you even do not need to merge all)."
+  print_message "# Please do so and finish the release process with the following command:"
+  print_message "git push --atomic ${REMOTE_REPO} ${MASTER_BRANCH} ${DEVELOP_BRANCH} --follow-tags # all or nothing"
 fi
