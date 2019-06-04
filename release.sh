@@ -32,9 +32,9 @@ fi
 
 if [[ "${VERBOSE}" = true ]]
 then
-  OUT=/dev/stdout
+  export OUT=/dev/stdout
 else
-  OUT=/dev/null
+  export OUT=/dev/null
 fi
 
 if [[ -f "${SCRIPT_PATH}/.common-util.sh" ]]
@@ -63,25 +63,25 @@ then
   exit 1
 fi
 
-git checkout --quiet "${DEVELOP_BRANCH}"
-git pull --quiet "${REMOTE_REPO}"
+git_checkout_existing_branch "${DEVELOP_BRANCH}"
+git_pull "${REMOTE_REPO}"
 
 # check and create master branch if not present
 if is_branch_existing "${MASTER_BRANCH}" || is_branch_existing "remotes/${REMOTE_REPO}/${MASTER_BRANCH}"
 then
-  git checkout --quiet "${MASTER_BRANCH}"
-  git pull --quiet "${REMOTE_REPO}"
+  git_checkout_existing_branch "${MASTER_BRANCH}"
+  git_pull "${REMOTE_REPO}"
 else
-  git checkout --quiet -b "${MASTER_BRANCH}"
+  git_checkout_new_branch "${MASTER_BRANCH}"
   git push --set-upstream "${REMOTE_REPO}" "${MASTER_BRANCH}"
 fi
 
-git checkout --quiet "${DEVELOP_BRANCH}"
-git checkout --quiet -b "${RELEASE_BRANCH}"
+git_checkout_existing_branch "${DEVELOP_BRANCH}"
+git_checkout_new_branch "${RELEASE_BRANCH}"
 
 build_snapshot_modules >> ${OUT}
 cd "${GIT_REPO_DIR}"
-git reset --quiet --hard
+git_reset
 
 set_modules_version "${RELEASE_VERSION}" >> ${OUT}
 cd "${GIT_REPO_DIR}"
@@ -90,18 +90,18 @@ if ! is_workspace_clean
 then
   # commit release versions
   RELEASE_COMMIT_MESSAGE=$(get_release_commit_message "${RELEASE_VERSION}")
-  git commit --quiet -am "${RELEASE_COMMIT_MESSAGE}"
+  git_commit "${RELEASE_COMMIT_MESSAGE}"
 else
   print_message "Nothing to commit..."
 fi
 
 build_release_modules >> ${OUT}
 cd "${GIT_REPO_DIR}"
-git reset --quiet --hard
+git_reset
 
 # merge current develop (over release branch) into master
-git checkout --quiet "${MASTER_BRANCH}"
-git merge --quiet -X theirs --no-edit "${RELEASE_BRANCH}"
+git_checkout_existing_branch "${MASTER_BRANCH}"
+git_merge_theirs "${RELEASE_BRANCH}"
 
 # create release tag on master
 RELEASE_TAG=$(format_release_tag "${RELEASE_VERSION}")
@@ -109,8 +109,8 @@ RELEASE_TAG_MESSAGE=$(get_release_tag_message "${RELEASE_VERSION}")
 git tag -a "${RELEASE_TAG}" -m "${RELEASE_TAG_MESSAGE}"
 
 # merge release into develop
-git checkout --quiet "${DEVELOP_BRANCH}"
-git merge --quiet -X theirs --no-edit "${RELEASE_BRANCH}"
+git_checkout_existing_branch "${DEVELOP_BRANCH}"
+git_merge_theirs "${RELEASE_BRANCH}"
 
 # prepare next snapshot version if necessary
 if [[ "${SNAPSHOTS}" = "true" ]]
@@ -125,12 +125,12 @@ if ! is_workspace_clean
 then
   # Commit next snapshot versions into develop
   SNAPSHOT_COMMIT_MESSAGE=$(get_next_snapshot_commit_message "${NEXT_SNAPSHOT_VERSION}")
-  git commit --quiet -am "${SNAPSHOT_COMMIT_MESSAGE}"
+  git_commit "${SNAPSHOT_COMMIT_MESSAGE}"
 else
   print_message "Nothing to commit..."
 fi
 
-if git merge --quiet --no-edit "${RELEASE_BRANCH}"
+if git_try_merge "${RELEASE_BRANCH}"
 then
   # Nope, doing that automatically is too dangerous. But the command is great!
   print_message "# Okay, now you've got a new tag and commits on ${MASTER_BRANCH} and ${DEVELOP_BRANCH}."

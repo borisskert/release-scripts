@@ -63,10 +63,10 @@ then
   exit 1
 fi
 
-git checkout --quiet "${MASTER_BRANCH}"
-git pull --quiet "${REMOTE_REPO}"
+git_checkout_existing_branch "${MASTER_BRANCH}"
+git_pull "${REMOTE_REPO}"
 
-git checkout --quiet -b "${HOTFIX_BRANCH}"
+git_checkout_new_branch "${HOTFIX_BRANCH}"
 
 set_modules_version "${HOTFIX_MODULE_VERSION}" >> ${OUT}
 cd "${GIT_REPO_DIR}"
@@ -75,7 +75,7 @@ if ! is_workspace_clean
 then
   # commit hotfix versions
   START_HOTFIX_COMMIT_MESSAGE=$(get_start_hotfix_commit_message "${HOTFIX_MODULE_VERSION}")
-  git commit --quiet -am "${START_HOTFIX_COMMIT_MESSAGE}"
+  git_commit "${START_HOTFIX_COMMIT_MESSAGE}"
 else
   print_message "Nothing to commit..."
 fi

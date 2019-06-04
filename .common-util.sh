@@ -62,3 +62,68 @@ function print_message {
     echo "${1}"
   fi
 }
+
+function git_commit {
+  if [[ "${VERBOSE}" = true ]]
+  then
+    git commit -am "${1}"
+  else
+    git commit --quiet -am "${1}"
+  fi
+}
+
+function git_checkout_existing_branch {
+  if [[ "${VERBOSE}" = true ]]
+  then
+    git checkout "${1}"
+  else
+    git checkout --quiet "${1}"
+  fi
+}
+
+function git_checkout_new_branch {
+  if [[ "${VERBOSE}" = true ]]
+  then
+    git checkout -b "${1}"
+  else
+    git checkout --quiet -b "${1}"
+  fi
+}
+
+function git_pull {
+  if [[ "${VERBOSE}" = true ]]
+  then
+    git pull "${1}"
+  else
+    git pull --quiet "${1}"
+  fi
+}
+
+function git_reset {
+  if [[ "${VERBOSE}" = true ]]
+  then
+    git reset --hard
+  else
+    git reset --quiet --hard
+  fi
+}
+
+function git_merge_theirs {
+  if [[ "${VERBOSE}" = true ]]
+  then
+    git merge -X theirs --no-edit "${1}"
+  else
+    git merge --quiet -X theirs --no-edit "${1}"
+  fi
+}
+
+function git_try_merge {
+  if [[ "${VERBOSE}" = true ]]
+  then
+    GIT_MERGE_RESULT=$(git merge --no-edit "${1}")
+  else
+    GIT_MERGE_RESULT=$(git merge --quiet --no-edit "${1}")
+  fi
+
+  echo "${GIT_MERGE_RESULT}"
+}

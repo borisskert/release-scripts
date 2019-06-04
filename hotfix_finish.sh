@@ -66,12 +66,12 @@ then
   exit 1
 fi
 
-git checkout --quiet "${HOTFIX_BRANCH}"
-git pull --quiet "${REMOTE_REPO}"
+git_checkout_existing_branch "${HOTFIX_BRANCH}"
+git_pull "${REMOTE_REPO}"
 
 build_snapshot_modules >> ${OUT}
 cd "${GIT_REPO_DIR}"
-git reset --quiet --hard
+git_reset
 
 set_modules_version "${HOTFIX_VERSION}" >> ${OUT}
 cd "${GIT_REPO_DIR}"
@@ -80,26 +80,26 @@ if ! is_workspace_clean
 then
   # commit hotfix versions
   HOTFIX_RELEASE_COMMIT_MESSAGE=$(get_release_hotfix_commit_message "${HOTFIX_VERSION}")
-  git commit --quiet -am "${HOTFIX_RELEASE_COMMIT_MESSAGE}"
+  git_commit "${HOTFIX_RELEASE_COMMIT_MESSAGE}"
 else
   print_message "Nothing to commit..."
 fi
 
 build_release_modules >> ${OUT}
 cd "${GIT_REPO_DIR}"
-git reset --quiet --hard
+git_reset
 
 # merge current hotfix into master
-git checkout --quiet "${MASTER_BRANCH}"
-git pull --quiet "${REMOTE_REPO}"
-git merge --quiet --no-edit "${HOTFIX_BRANCH}"
+git_checkout_existing_branch "${MASTER_BRANCH}"
+git_pull "${REMOTE_REPO}"
+git_try_merge "${HOTFIX_BRANCH}"
 
 # create release tag
 HOTFIX_TAG=$(format_release_tag "${HOTFIX_VERSION}")
 HOTFIX_TAG_MESSAGE=$(get_hotfix_relesae_tag_message "${HOTFIX_VERSION}")
 git tag -a "${HOTFIX_TAG}" -m "${HOTFIX_TAG_MESSAGE}"
 
-git checkout --quiet "${HOTFIX_BRANCH}"
+git_checkout_existing_branch "${HOTFIX_BRANCH}"
 
 # prepare next snapshot version if necessary
 if [[ "${SNAPSHOTS}" = "true" ]]
@@ -114,15 +114,15 @@ if ! is_workspace_clean
 then
   # commit next snapshot versions
   SNAPSHOT_AFTER_HOTFIX_COMMIT_MESSAGE=$(get_next_snapshot_commit_message_after_hotfix "${NEXT_SNAPSHOT_VERSION}" "${HOTFIX_VERSION}")
-  git commit --quiet -am "${SNAPSHOT_AFTER_HOTFIX_COMMIT_MESSAGE}"
+  git_commit "${SNAPSHOT_AFTER_HOTFIX_COMMIT_MESSAGE}"
 else
   print_message "Nothing to commit..."
 fi
 
 # merge next snapshot version into develop
-git checkout --quiet "${DEVELOP_BRANCH}"
+git_checkout_existing_branch "${DEVELOP_BRANCH}"
 
-if git merge --quiet --no-edit "${HOTFIX_BRANCH}"
+if git_try_merge "${HOTFIX_BRANCH}"
 then
   print_message "# Okay, now you've got a new tag and commits on ${MASTER_BRANCH} and ${DEVELOP_BRANCH}"
   print_message "# Please check if everything looks as expected and then push."
