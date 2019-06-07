@@ -16,9 +16,9 @@ source "${SCRIPT_PATH}/.parse-arguments.sh"
 
 if [[ "${SNAPSHOTS}" = true && ( $# -lt 1 || $# -gt 2 ) ]]
 then
-  echo 'Usage: hotfix_start.sh <hotfix-version> [--without-snapshot]'
+  echo 'Usage: hotfix_start.sh [-q|--quiet] [-v|--verbose] [-s|--snapshots] <hotfix-version>'
   echo 'For example: hotfix_start.sh 0.2.1'
-  echo 'or without snapshot: hotfix_start.sh 0.2.1 --without-snapshot'
+  echo 'or in case you dont want snapshot-versions: hotfix_start.sh -s=false 0.2.1'
   exit 2
 fi
 

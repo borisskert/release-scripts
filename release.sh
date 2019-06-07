@@ -19,7 +19,7 @@ then
   echo "Release scripts (release, version: ${VERSION})"
   echo 'Usage: release.sh [-q|--quiet] [-v|--verbose] [-s|--snapshots] <release-version> ( <next-snapshot-version> )'
   echo 'For example: release.sh 0.1.0 0.2.0'
-  echo 'or in case you dont want snapshot-versions: release.sh 0.1.0 --without-snapshot'
+  echo 'or in case you dont want snapshot-versions: release.sh -s=false 0.1.0'
   exit 2
 fi
 
