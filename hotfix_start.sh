@@ -11,19 +11,17 @@ else
 	VERSION="UNKNOWN VERSION"
 fi
 
-# shellcheck source=.parse-arguments.sh
+# shellcheck source=hotfix_start.argbash.generated.sh
 source "${SCRIPT_PATH}/hotfix_start.argbash.generated.sh"
 
-if [[ "${_arg_verbose}" = "on" ]]
+if [[ "${VERBOSE}" = "on" ]]
 then
   OUT=/dev/stdout
 else
   OUT=/dev/null
 fi
 
-HOTFIX_VERSION=${_arg_hotfix_version}
-
-if [[ "${_arg_snapshots}" = "on" ]]
+if [[ "${SNAPSHOTS}" = "on" ]]
 then
   HOTFIX_MODULE_VERSION="${HOTFIX_VERSION}-SNAPSHOT"
 else

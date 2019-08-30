@@ -13,4 +13,10 @@
 # echo "Value of --snapshot: $_arg_snapshot"
 # echo "hotfix-version is $_arg_hotfix_version"
 
+# shellcheck disable=SC2154
+export HOTFIX_VERSION=${_arg_hotfix_version}
+export VERBOSE=${_arg_verbose}
+export QUIET=${_arg_quiet}
+export SNAPSHOTS=${_arg_snapshots}
+
 # ] <-- needed because of Argbash

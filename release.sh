@@ -14,10 +14,7 @@ fi
 # shellcheck source=release.argbash.generated.sh
 source "${SCRIPT_PATH}/release.argbash.generated.sh"
 
-RELEASE_VERSION=${_arg_release_version}
-NEXT_VERSION=${_arg_snapshot_version}
-
-if [[ "${_arg_verbose}" = "on" ]]
+if [[ "${VERBOSE}" = "on" ]]
 then
   export OUT=/dev/stdout
 else
@@ -100,7 +97,7 @@ git_checkout_existing_branch "${DEVELOP_BRANCH}"
 git_merge_theirs "${RELEASE_BRANCH}"
 
 # prepare next snapshot version if necessary
-if [[ "${_arg_snapshots}" = "on" ]]
+if [[ "${SNAPSHOTS}" = "on" ]]
 then
   NEXT_SNAPSHOT_VERSION=$(format_snapshot_version "${NEXT_VERSION}")
   set_modules_version "${NEXT_SNAPSHOT_VERSION}" >> ${OUT}

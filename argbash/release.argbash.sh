@@ -15,7 +15,14 @@
 # echo "release-version is $_arg_release_version"
 # echo "snapshot-version is $_arg_snapshot_version"
 
-if [[ "${_arg_snapshots}" = "on" && "${_arg_snapshot_version}" = "" ]]
+# shellcheck disable=SC2154
+export RELEASE_VERSION=${_arg_release_version}
+export NEXT_VERSION=${_arg_snapshot_version}
+export VERBOSE=${_arg_verbose}
+export QUIET=${_arg_quiet}
+export SNAPSHOTS=${_arg_snapshots}
+
+if [[ "${SNAPSHOTS}" = "on" && "${NEXT_VERSION}" = "" ]]
 then
   echo "FATAL ERROR: Not enough positional arguments - we require 'snapshot-version' when snapshots mode is turned on."
 fi
