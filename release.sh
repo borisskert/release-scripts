@@ -11,26 +11,13 @@ else
 	VERSION="UNKNOWN VERSION"
 fi
 
-# shellcheck source=.parse-arguments.sh
-source "${SCRIPT_PATH}/.parse-arguments.sh"
+# shellcheck source=release.argbash.generated.sh
+source "${SCRIPT_PATH}/release.argbash.generated.sh"
 
-if [[ "${SNAPSHOTS}" = true && "${#ARGUMENTS[@]}" -ne 2 ]]
-then
-  echo "Release scripts (release, version: ${VERSION})"
-  echo 'Usage: release.sh [-q|--quiet] [-v|--verbose] [-s|--snapshots] <release-version> ( <next-snapshot-version> )'
-  echo 'For example: release.sh 0.1.0 0.2.0'
-  echo 'or in case you dont want snapshot-versions: release.sh -s=false 0.1.0'
-  exit 2
-fi
+RELEASE_VERSION=${_arg_release_version}
+NEXT_VERSION=${_arg_snapshot_version}
 
-RELEASE_VERSION=$1
-
-if [[ "${SNAPSHOTS}" = true ]]
-then
-  NEXT_VERSION=$2
-fi
-
-if [[ "${VERBOSE}" = true ]]
+if [[ "${_arg_verbose}" = "on" ]]
 then
   export OUT=/dev/stdout
 else
@@ -48,7 +35,7 @@ fi
 
 print_message "Release scripts (release, version: ${VERSION})"
 
-RELEASE_BRANCH=$(format_release_branch_name "$RELEASE_VERSION")
+RELEASE_BRANCH=$(format_release_branch_name "${RELEASE_VERSION}")
 
 if [[ ! "${CURRENT_BRANCH}" = "${DEVELOP_BRANCH}" ]]
 then
@@ -113,7 +100,7 @@ git_checkout_existing_branch "${DEVELOP_BRANCH}"
 git_merge_theirs "${RELEASE_BRANCH}"
 
 # prepare next snapshot version if necessary
-if [[ "${SNAPSHOTS}" = "true" ]]
+if [[ "${_arg_snapshots}" = "on" ]]
 then
   NEXT_SNAPSHOT_VERSION=$(format_snapshot_version "${NEXT_VERSION}")
   set_modules_version "${NEXT_SNAPSHOT_VERSION}" >> ${OUT}

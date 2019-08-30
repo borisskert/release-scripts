@@ -57,14 +57,14 @@ function is_workspace_synced {
 }
 
 function print_message {
-  if [[ "${QUIET}" = false ]]
+  if [[ "${_arg_quiet}" = "off" ]]
   then
     echo "${1}"
   fi
 }
 
 function git_commit {
-  if [[ "${VERBOSE}" = true ]]
+  if [[ "${_arg_verbose}" = "on" ]]
   then
     git commit -am "${1}"
   else
@@ -73,7 +73,7 @@ function git_commit {
 }
 
 function git_checkout_existing_branch {
-  if [[ "${VERBOSE}" = true ]]
+  if [[ "${_arg_verbose}" = "on" ]]
   then
     git checkout "${1}"
   else
@@ -82,7 +82,7 @@ function git_checkout_existing_branch {
 }
 
 function git_checkout_new_branch {
-  if [[ "${VERBOSE}" = true ]]
+  if [[ "${_arg_verbose}" = "on" ]]
   then
     git checkout -b "${1}"
   else
@@ -91,7 +91,7 @@ function git_checkout_new_branch {
 }
 
 function git_pull {
-  if [[ "${VERBOSE}" = true ]]
+  if [[ "${_arg_verbose}" = "on" ]]
   then
     git pull "${1}"
   else
@@ -100,7 +100,7 @@ function git_pull {
 }
 
 function git_reset {
-  if [[ "${VERBOSE}" = true ]]
+  if [[ "${_arg_verbose}" = "on" ]]
   then
     git reset --hard
   else
@@ -109,7 +109,7 @@ function git_reset {
 }
 
 function git_merge_theirs {
-  if [[ "${VERBOSE}" = true ]]
+  if [[ "${_arg_verbose}" = "on" ]]
   then
     git merge -X theirs --no-edit "${1}"
   else
@@ -118,7 +118,7 @@ function git_merge_theirs {
 }
 
 function git_try_merge {
-  if [[ "${VERBOSE}" = true ]]
+  if [[ "${_arg_verbose}" = "on" ]]
   then
     GIT_MERGE_RESULT=$(git merge --no-edit "${1}")
   else

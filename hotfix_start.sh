@@ -12,26 +12,18 @@ else
 fi
 
 # shellcheck source=.parse-arguments.sh
-source "${SCRIPT_PATH}/.parse-arguments.sh"
+source "${SCRIPT_PATH}/hotfix_start.argbash.generated.sh"
 
-if [[ "${SNAPSHOTS}" = true && ( $# -lt 1 || $# -gt 2 ) ]]
-then
-  echo 'Usage: hotfix_start.sh [-q|--quiet] [-v|--verbose] [-s|--snapshots] <hotfix-version>'
-  echo 'For example: hotfix_start.sh 0.2.1'
-  echo 'or in case you dont want snapshot-versions: hotfix_start.sh -s=false 0.2.1'
-  exit 2
-fi
-
-if [[ "${VERBOSE}" = true ]]
+if [[ "${_arg_verbose}" = "on" ]]
 then
   OUT=/dev/stdout
 else
   OUT=/dev/null
 fi
 
-HOTFIX_VERSION=$1
+HOTFIX_VERSION=${_arg_hotfix_version}
 
-if [[ "${SNAPSHOTS}" = true ]]
+if [[ "${_arg_snapshots}" = "on" ]]
 then
   HOTFIX_MODULE_VERSION="${HOTFIX_VERSION}-SNAPSHOT"
 else

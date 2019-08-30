@@ -11,29 +11,21 @@ else
 	VERSION="UNKNOWN VERSION"
 fi
 
-# shellcheck source=.parse-arguments.sh
-source "${SCRIPT_PATH}/.parse-arguments.sh"
+# shellcheck source=hotfix_finish.argbash.generated.sh
+source "${SCRIPT_PATH}/hotfix_finish.argbash.generated.sh"
 
-if [[ "${SNAPSHOTS}" = true && $# -ne 2 ]]
-then
-  echo 'Usage: hotfix_finish.sh [-q|--quiet] [-v|--verbose] [-s|--snapshots] <hotfix-version> ( <next-snapshot-version> )'
-  echo 'For example: hotfix_finish.sh 0.2.1 0.3.0'
-  echo 'or in case you dont want snapshot-versions: hotfix_finish.sh -s=false 0.2.1'
-  exit 2
-fi
-
-if [[ "${VERBOSE}" = true ]]
+if [[ "${_arg_verbose}" = "on" ]]
 then
   OUT=/dev/stdout
 else
   OUT=/dev/null
 fi
 
-HOTFIX_VERSION=$1
+HOTFIX_VERSION=${_arg_hotfix_version}
 
-if [[ "${SNAPSHOTS}" = true ]]
+if [[ "${_arg_snapshots}" = "on" ]]
 then
-  NEXT_VERSION=$2
+  NEXT_VERSION=${_arg_snapshot_version}
 fi
 
 # Necessary to calculate develop/master branch name
@@ -102,7 +94,7 @@ git tag -a "${HOTFIX_TAG}" -m "${HOTFIX_TAG_MESSAGE}"
 git_checkout_existing_branch "${HOTFIX_BRANCH}"
 
 # prepare next snapshot version if necessary
-if [[ "${SNAPSHOTS}" = "true" ]]
+if [[ "${_arg_snapshots}" = "on" ]]
 then
   NEXT_SNAPSHOT_VERSION=$(format_snapshot_version "${NEXT_VERSION}")
   set_modules_version "${NEXT_SNAPSHOT_VERSION}" >> ${OUT}

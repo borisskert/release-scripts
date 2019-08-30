@@ -15,7 +15,7 @@ teardown() {
 	echo "some work" >> somefile
 	git add somefile
 	git commit -m "Do some work"
-	./release-scripts/release.sh --snapshots=false 23.1
+	./release-scripts/release.sh --no-snapshots 23.1
 	git push --atomic origin master develop --follow-tags
 
 	git checkout develop
@@ -39,12 +39,12 @@ teardown() {
 }
 
 @test "run hotfix from develop without snapshot" {
-	./release-scripts/release.sh --snapshots=false 23.1
+	./release-scripts/release.sh --no-snapshots 23.1
 	git push --atomic origin master develop --follow-tags
 
 	# ------------------------- START HOTFIX -------------------------
 
-	./release-scripts/hotfix_start.sh --snapshots=false 23.1.1
+	./release-scripts/hotfix_start.sh --no-snapshots 23.1.1
   git push --set-upstream origin hotfix-23.1.1
 
   [[ "$(cat version.txt)" == "23.1.1" ]]
@@ -69,7 +69,7 @@ teardown() {
   # ------------------------- FINISH HOTFIX -------------------------
 
 	git checkout hotfix-23.1.1
-	./release-scripts/hotfix_finish.sh --snapshots=false 23.1.1
+	./release-scripts/hotfix_finish.sh --no-snapshots 23.1.1
 	git push --atomic origin master develop hotfix-23.1.1 --follow-tags
 
 	git checkout develop
