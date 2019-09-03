@@ -23,9 +23,13 @@ init_repo() {
 	git add version.txt
   git commit -m "set version number $(echo $1)" version.txt
 	git push -u origin master develop
+
+	echo "=================================== init_repo() finished"
 }
 
 remove_workdir() {
+  echo "=================================== remove_workdir() start"
+
 	cd ..
 	[[ -d "${WORKDIR}" ]] && rm -fr "${WORKDIR}"
 }

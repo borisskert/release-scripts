@@ -1,5 +1,9 @@
 # release-scripts [![Build Status](https://travis-ci.com/borisskert/release-scripts.svg?branch=master)](https://travis-ci.com/borisskert/release-scripts)
 
+release-scripts (also called Boris' magic scripts 😇) are designed to be used to perform software releases synchronously
+ in multi-module mono-repositories despite of bunches of different technologies.
+Using release-scripts may redundantize plugins like maven-release-plugin.
+
 ## Description
 
 This scripts can help you if you have are working in a [git-flow](https://danielkummer.github.io/git-flow-cheatsheet/)
@@ -23,7 +27,7 @@ Especially the release and hotfix step of git-flow requires a lot commits and me
 
 * Perform this steps in terminal:
 
-```
+```bash
   $ git submodule add https://github.com/borisskert/release-scripts release-scripts
   $ cp release-scripts/.hooks-default.sh .release-scripts-hooks.sh
 ```
@@ -34,27 +38,52 @@ Especially the release and hotfix step of git-flow requires a lot commits and me
 
 ### with snapshot versions
 
-    $ ./release.sh <release-version> <next snapshot/beta version>
+    $ ./release.sh <release-version> <snapshot-version>
     # Perform next steps the script is telling
 
 ### without snapshot versions
 
-    $ ./release.sh <release-version> --without-snapshot
+    $ ./release.sh --no-snapshots <release-version>
     # Perform next steps the script is telling
 
+## Usage
+
+```bash
+$ ./release.sh [-q|--(no-)quiet] [-v|--(no-)verbose] [-s|--(no-)snapshots] [-h|--help] <release-version> [<snapshot-version>]
+```
+
+### Options
+
+| Short option | Long option | Default | Description |
+|--------------|-------------|---------|-------------|
+| -s     | --(no-)snapshots | on | Turn on snapshots mode. If enabled the argument <snapshot-version> is mandatory |
+| -q     | --(no-)quiet     | off | Turn on quiet mode for automation                                              |
+| -v     | --(no-)verbose   | off | Turn on verbose mode for debugging                                             |
+
 ## Perform a hotfix release
+
+### Usage:
+
+```bash
+$ ./hotfix_start.sh [-q|--(no-)quiet] [-v|--(no-)verbose] [-s|--(no-)snapshots] [-h|--help] <hotfix-version>
+```
+
+and
+```bash
+$ ./hotfix_finish.sh [-q|--(no-)quiet] [-v|--(no-)verbose] [-s|--(no-)snapshots] [-h|--help] <hotfix-version> [<snapshot-version>]
+```
 
 ### with snapshot versions
 
     $ ./hotfix_start.sh <hotfix-version>
     # commit and push your work into the hotfix-branch
-    $ ./hotfix_finish.sh <hotfix-version> <current snapshot/beta version>
+    $ ./hotfix_finish.sh <hotfix-version> <snapshot-version>
 
 ### without snapshot versions
 
-    $ ./hotfix_start.sh <hotfix-version> --without-snapshot
+    $ ./hotfix_start.sh --no-snapshots <hotfix-version>
     # commit and push your work into the hotfix-branch
-    $ ./hotfix_finish.sh <hotfix-version> --without-snapshot
+    $ ./hotfix_finish.sh --no-snapshots <hotfix-version>
 
 ## Revert a (local) release
 

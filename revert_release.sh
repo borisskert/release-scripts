@@ -33,7 +33,12 @@ fi
 
 RELEASE_BRANCH=$(format_release_branch_name "${RELEASE_VERSION}")
 
-check_local_workspace_state "revert_release"
+if ! is_workspace_clean
+then
+  echo "This script is only safe when your have a clean workspace."
+  echo "Please clean your workspace by stashing or committing and pushing changes before processing this script."
+  exit 1
+fi
 
 if [ $# -eq 1 ]
 then

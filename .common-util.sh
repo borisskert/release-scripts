@@ -29,21 +29,12 @@ export CURRENT_BRANCH
 GIT_REPO_DIR=$(git rev-parse --show-toplevel)
 export GIT_REPO_DIR
 
-function check_local_workspace_state {
-	if ! git diff-index --quiet HEAD --
-	then
-		echo "This script is only safe when your have a clean workspace."
-		echo "Please clean your workspace by stashing or committing and pushing changes before processing this $1 script."
-		exit 1
-	fi
-}
-
 function is_branch_existing {
-  if git branch -a --list | grep "$1"
+  if ! git branch -a --list | grep -q "$1"
   then
-    return 0
-  else
     return 1
+  else
+    return 0
   fi
 }
 
@@ -63,4 +54,76 @@ function is_workspace_synced {
   else
     return 1
   fi
+}
+
+function print_message {
+  if [[ "${QUIET}" = "off" ]]
+  then
+    echo "${1}"
+  fi
+}
+
+function git_commit {
+  if [[ "${VERBOSE}" = "on" ]]
+  then
+    git commit -am "${1}"
+  else
+    git commit --quiet -am "${1}"
+  fi
+}
+
+function git_checkout_existing_branch {
+  if [[ "${VERBOSE}" = "on" ]]
+  then
+    git checkout "${1}"
+  else
+    git checkout --quiet "${1}"
+  fi
+}
+
+function git_checkout_new_branch {
+  if [[ "${VERBOSE}" = "on" ]]
+  then
+    git checkout -b "${1}"
+  else
+    git checkout --quiet -b "${1}"
+  fi
+}
+
+function git_pull {
+  if [[ "${VERBOSE}" = "on" ]]
+  then
+    git pull "${1}"
+  else
+    git pull --quiet "${1}"
+  fi
+}
+
+function git_reset {
+  if [[ "${VERBOSE}" = "on" ]]
+  then
+    git reset --hard
+  else
+    git reset --quiet --hard
+  fi
+}
+
+function git_merge_theirs {
+  if [[ "${VERBOSE}" = "on" ]]
+  then
+    git merge -X theirs --no-edit "${1}"
+  else
+    git merge --quiet -X theirs --no-edit "${1}"
+  fi
+}
+
+function git_try_merge {
+  if [[ "${VERBOSE}" = "on" ]]
+  then
+    GIT_MERGE_RESULT=$(git merge --no-edit "${1}")
+  else
+    GIT_MERGE_RESULT=$(git merge --quiet --no-edit "${1}")
+  fi
+
+  echo "${GIT_MERGE_RESULT}"
 }
