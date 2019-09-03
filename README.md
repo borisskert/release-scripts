@@ -1,7 +1,7 @@
 # release-scripts [![Build Status](https://travis-ci.com/borisskert/release-scripts.svg?branch=master)](https://travis-ci.com/borisskert/release-scripts)
 
-release-scripts are designed to be used to perform software releases synchronously in multi-module mono-repositories
- despite of bunches of different technologies.
+release-scripts (also called Boris' magic scripts 😇) are designed to be used to perform software releases synchronously
+ in multi-module mono-repositories despite of bunches of different technologies.
 Using release-scripts may redundantize plugins like maven-release-plugin.
 
 ## Description
